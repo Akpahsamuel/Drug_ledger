@@ -26,7 +26,6 @@ DrugLedger/
 - Sui blockchain
 
 ### Frontend
-- Next.js
 - React
 - @mysten/dapp-kit for Sui blockchain integration
 - @radix-ui/themes for UI components
