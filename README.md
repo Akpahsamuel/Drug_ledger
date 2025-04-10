@@ -26,7 +26,6 @@ DrugLedger/
 - Sui blockchain
 
 ### Frontend
-- Next.js
 - React
 - @mysten/dapp-kit for Sui blockchain integration
 - @radix-ui/themes for UI components
@@ -58,6 +57,7 @@ DrugLedger/
 1. Navigate to the frontend directory:
    ```bash
    cd frontend
+   cd drugfront
    ```
 2. Install dependencies:
    ```bash
