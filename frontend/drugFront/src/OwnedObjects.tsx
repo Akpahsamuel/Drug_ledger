@@ -1,4 +1,5 @@
-import { useCurrentAccount, useSuiClientQuery } from "@mysten/dapp-kit";
+import { useCurrentAccount } from "@mysten/dapp-kit";
+import { useSuiClientQuery } from '@mysten/sui.js';
 import { Flex, Heading, Text } from "@radix-ui/themes";
 
 export function OwnedObjects() {
