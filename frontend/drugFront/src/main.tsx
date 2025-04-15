@@ -8,23 +8,19 @@ import "@radix-ui/themes/styles.css"
 import App from './App'
 import { SuiClientProvider, WalletProvider } from '@mysten/dapp-kit'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { getFullnodeUrl, SuiClient } from '@mysten/sui.js/client'
 import { Theme } from '@radix-ui/themes'
 import authReducer from './store/authSlice'
 import { networkConfig } from "./networkConfig.ts"
 import "./index.css"
-
-// Create a Sui client instance for the mainnet
-const suiClient = new SuiClient({ url: getFullnodeUrl('devnet') })
 
 // Create Redux store with proper typing
 const store = configureStore({
   reducer: {
     auth: authReducer
   },
-  middleware: (getDefaultMiddleware) => 
+  middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false // Disable serializable check for Sui objects
+      serializableCheck: false
     })
 })
 

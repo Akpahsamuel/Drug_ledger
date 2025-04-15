@@ -10,11 +10,15 @@ import { Layout } from "./components/layout";
 import "./index.css";
 import Home from "@/pages/home/Home";
 import Login from "./pages/login/LoginPage";
-import PublicPage from "./pages/public/PublicPage";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 import { ProtectedRoute } from "./components/protected-route";
 import PublicDashboard from "./pages/public/dashboard/PublicDashboard";
+import Verification from "./pages/public/verification/Verification";
+import Issues from "./pages/public/issues/Issues";
+import Report from "./pages/public/report/Report";
+import Search from "./pages/public/search/Search";
+import Settings from "./pages/public/settings/Settings";
 import Unauthorized from "./pages/unauthorized";
 import NotFound from "@/pages/not-found";
 import { useSelector } from 'react-redux';
@@ -51,6 +55,50 @@ function App() {
                       } />
                       <Route path="/unauthorized" element={<Unauthorized />} />
                       
+                      {/* Public role routes */}
+                      <Route path="/public/dashboard" element={
+                        <ProtectedRoute allowedRoles={["public"]}>
+                          <Layout>
+                            <PublicDashboard />
+                          </Layout>
+                        </ProtectedRoute>
+                      } />
+                      <Route path="/public/verification" element={
+                        <ProtectedRoute allowedRoles={["public"]}>
+                          <Layout>
+                            <Verification />
+                          </Layout>
+                        </ProtectedRoute>
+                      } />
+                      <Route path="/public/issues" element={
+                        <ProtectedRoute allowedRoles={["public"]}>
+                          <Layout>
+                            <Issues />
+                          </Layout>
+                        </ProtectedRoute>
+                      } />
+                      <Route path="/public/report" element={
+                        <ProtectedRoute allowedRoles={["public"]}>
+                          <Layout>
+                            <Report />
+                          </Layout>
+                        </ProtectedRoute>
+                      } />
+                      <Route path="/public/search" element={
+                        <ProtectedRoute allowedRoles={["public"]}>
+                          <Layout>
+                            <Search />
+                          </Layout>
+                        </ProtectedRoute>
+                      } />
+                      <Route path="/public/settings" element={
+                        <ProtectedRoute allowedRoles={["public"]}>
+                          <Layout>
+                            <Settings />
+                          </Layout>
+                        </ProtectedRoute>
+                      } />
+
                       {/* Protected routes with layout */}
                       <Route path="/dashboard" element={
                         <ProtectedRoute>
@@ -107,13 +155,6 @@ function App() {
                         <ProtectedRoute allowedRoles={["distributor"]}>
                           <Layout>
                             <div>Distributor Dashboard</div>
-                          </Layout>
-                        </ProtectedRoute>
-                      } />
-                      <Route path="/public/dashboard" element={
-                        <ProtectedRoute allowedRoles={["public"]}>
-                          <Layout>
-                            <PublicPage />
                           </Layout>
                         </ProtectedRoute>
                       } />

@@ -25,16 +25,16 @@ export function useRoleManager() {
   return useQuery({
     queryKey: ['role', account?.address],
     queryFn: async () => {
-      // Immediately return public role if no account is connected
+      // If no account is connected, return null to indicate no wallet connection
       if (!account?.address) {
-        console.log('No account connected, returning public role')
-        return ROLE_PUBLIC
+        console.log('No account connected')
+        return null
       }
 
-      // Return public role if environment variables are not set
+      // Return null if environment variables are not set
       if (!CONTRACT_ADDRESS || !PACKAGE_ADDRESS) {
         console.error('Contract or package address not configured')
-        return ROLE_PUBLIC
+        return null
       }
 
       try {
@@ -55,7 +55,7 @@ export function useRoleManager() {
         // Get the return value from the transaction results
         const returnValue = result.results?.[0]?.returnValues?.[0]
         if (!returnValue) {
-          console.log('No role found, returning public role')
+          console.log('No role found in blockchain, user is public')
           return ROLE_PUBLIC
         }
 
@@ -72,20 +72,21 @@ export function useRoleManager() {
           case ROLE_DISTRIBUTOR:
             return 'distributor'
           default:
-            console.log('Unknown role value, returning public role')
+            console.log('Unknown role value, user is public')
             return ROLE_PUBLIC
         }
       } catch (error) {
         console.error('Error fetching role:', error)
         // If the error is related to package not found, return public role
         if (error instanceof Error && error.message.includes('Package object does not exist')) {
-          console.log('Package not found, returning public role')
+          console.log('Package not found, user is public')
           return ROLE_PUBLIC
         }
+        // For any other error, return public role
         return ROLE_PUBLIC
       }
     },
-    enabled: true,
+    enabled: !!account?.address, // Only run query when account is connected
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
     retry: 1, // Only retry once
     refetchOnWindowFocus: false, // Prevent refetch on window focus
