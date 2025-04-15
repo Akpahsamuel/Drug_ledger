@@ -5,7 +5,7 @@ module drugledger::drug_ledger {
     use sui::dynamic_field as df;
     use std::string::{Self, String};
    // use std::vector;
-    use sui::clock::{Self, Clock};
+   // use sui::clock::{Self, Clock};
     use sui::vec_map::{Self, VecMap};
   //  use sui::transfer;
    // use sui::tx_context::{Self, TxContext};
@@ -291,7 +291,7 @@ module drugledger::drug_ledger {
         addr: address,
         name: vector<u8>,
         license: vector<u8>,
-        clock: &Clock,
+       // clock: &Clock,
         ctx: &mut TxContext
     ) {
         assert!(tx_context::sender(ctx) == get_owner_address(admin), ENotAuthorized);
@@ -306,7 +306,7 @@ module drugledger::drug_ledger {
             license: license_str,
             address: addr,
             verified: true,
-            registration_date: clock::timestamp_ms(clock),
+            registration_date: tx_context::epoch_timestamp_ms(ctx),
             drug_count: 0,
         };
         
@@ -375,7 +375,7 @@ module drugledger::drug_ledger {
         manufacturer_index: &mut ManufacturerIndex,
         status_index: &mut StatusIndex,
         cid: vector<u8>,
-        clock: &Clock,
+       // clock: &Clock,
         ctx: &mut TxContext
     ) {
         assert!(manufacturer.address == tx_context::sender(ctx), ENotAuthorized);
@@ -385,7 +385,7 @@ module drugledger::drug_ledger {
         counter.counter = counter.counter + 1;
         
         let cid_str = string::utf8(cid);
-        let timestamp = clock::timestamp_ms(clock);
+        let timestamp =  tx_context::epoch_timestamp_ms(ctx);
         
         // Add mut keyword here
         let mut drug = Drug {
@@ -449,7 +449,7 @@ module drugledger::drug_ledger {
         status_index: &mut StatusIndex,
         new_status: u8,
         role_registry: &RoleRegistry,
-        clock: &Clock,
+        //clock: &Clock,
         ctx: &mut TxContext
     ) {
         let sender = tx_context::sender(ctx);
@@ -487,7 +487,7 @@ module drugledger::drug_ledger {
         
         // Update drug status
         drug.status = new_status;
-        drug.last_updated = clock::timestamp_ms(clock);
+        drug.last_updated = tx_context::epoch_timestamp_ms(ctx);
         
         event::emit(DrugStatusChanged {
             drug_id: drug.drug_id,
@@ -515,7 +515,7 @@ module drugledger::drug_ledger {
         description: vector<u8>,
         severity: u8,
         category: vector<u8>,
-        clock: &Clock,
+        //clock: &Clock,
         ctx: &mut TxContext
     ) {
         assert!(severity >= 1 && severity <= 5, EInvalidInput);
@@ -523,7 +523,7 @@ module drugledger::drug_ledger {
         let issue = Issue {
             name: string::utf8(name),
             description: string::utf8(description),
-            date: clock::timestamp_ms(clock),
+            date: tx_context::epoch_timestamp_ms(ctx),
             owner: tx_context::sender(ctx),
             resolved: false,
             reason: string::utf8(b""),
@@ -540,7 +540,7 @@ module drugledger::drug_ledger {
         
         // Update drug verification status
         drug.verified = false;
-        drug.last_updated = clock::timestamp_ms(clock);
+        drug.last_updated =tx_context::epoch_timestamp_ms(ctx);
         
         event::emit(IssueOpened {
             drug_id: drug.drug_id,
@@ -564,7 +564,7 @@ module drugledger::drug_ledger {
         drug: &mut Drug,
         issue_id: u64,
         reason: vector<u8>,
-        clock: &Clock,
+        //clock: &Clock,
         ctx: &mut TxContext
     ) {
         let issues: &mut IssueCollection = df::borrow_mut(&mut drug.id, b"issues");
@@ -579,7 +579,7 @@ module drugledger::drug_ledger {
         assert!(issue.owner == sender || drug.manufacturer == sender, ENotIssueOwner);
         
         // Update issue
-        let current_time = clock::timestamp_ms(clock);
+        let current_time = tx_context::epoch_timestamp_ms(ctx);
         let resolution_time = current_time - issue.date;
         
         issue.reason = string::utf8(reason);
@@ -669,7 +669,7 @@ module drugledger::drug_ledger {
         drug_id: u64,
         entity: vector<u8>,
         action: vector<u8>,
-        clock: &Clock,
+       // clock: &Clock,
         ctx: &mut TxContext
     ) {
         event::emit(Log {
@@ -677,7 +677,7 @@ module drugledger::drug_ledger {
             entity: string::utf8(entity),
             action: string::utf8(action),
             from: tx_context::sender(ctx),
-            timestamp: clock::timestamp_ms(clock),
+            timestamp:tx_context::epoch_timestamp_ms(ctx),
         });
     }
 
