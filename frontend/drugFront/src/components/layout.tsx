@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { SideNav } from "./side-nav";
 import { useSelector } from 'react-redux';
 import { RootState } from "@/store/store";
+import { Toaster } from "./ui/toaster";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -24,17 +25,23 @@ export function Layout({ children }: LayoutProps) {
   // Don't show layout on public routes
   const publicRoutes = ["/", "/login", "/register"];
   if (publicRoutes.includes(location.pathname)) {
-    return <>{children}</>;
+    return (
+      <>
+        {children}
+        <Toaster />
+      </>
+    );
   }
 
   return (
     <div className="flex h-screen bg-slate-900">
       <SideNav />
       <main className="flex-1 overflow-auto">
-        <div className="container mx-auto p-6">
+        <div className="container mx-auto p-4 md:p-6 pt-16 md:pt-6">
           {children}
         </div>
       </main>
+      <Toaster />
     </div>
   );
 } 
