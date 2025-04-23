@@ -4,11 +4,11 @@ module drugledger::drug_ledger {
     use sui::table::{Self, Table};
     use sui::dynamic_field as df;
     use std::string::{Self, String};
-   // use std::vector;
-   // use sui::clock::{Self, Clock};
+    //use std::vector;
+    use sui::clock::{Self, Clock};
     use sui::vec_map::{Self, VecMap};
-  //  use sui::transfer;
-   // use sui::tx_context::{Self, TxContext};
+   // use sui::transfer;
+  //  use sui::tx_context::{Self, TxContext};
 
     // Error codes
     const ENotIssueOwner: u64 = 3;
@@ -17,6 +17,7 @@ module drugledger::drug_ledger {
     const EIssueNotFound: u64 = 6;
     const EInvalidCID: u64 = 7;
     const EInvalidLicense: u64 = 8;
+    const EAddressAlreadyExists: u64 = 9;
 
     // Role constants
     const ROLE_ADMIN: u8 = 0;
@@ -59,15 +60,6 @@ module drugledger::drug_ledger {
         verified: bool,
         registration_date: u64,
         drug_count: u64,
-    }
-
-    // Regulator object
-    #[allow(unused_field)]
-    public struct Regulator has key, store {
-        id: UID,
-        name: String,
-        jurisdiction: String,
-        address: address,
     }
 
     // Issue with pagination support
@@ -174,6 +166,18 @@ module drugledger::drug_ledger {
         old_version: u64,
         new_version: u64,
         performed_by: address,
+    }
+
+    public struct RoleRevoked has copy, drop {
+        address: address,
+        role: u8,
+        reason: String,
+        revoked_by: address,
+    }
+
+    public struct AdminTransferred has copy, drop {
+        previous_admin: address,
+        new_admin: address,
     }
 
     /// Initialization function - creates the core system objects 
@@ -291,11 +295,12 @@ module drugledger::drug_ledger {
         addr: address,
         name: vector<u8>,
         license: vector<u8>,
-       // clock: &Clock,
+        clock: &Clock,
         ctx: &mut TxContext
     ) {
         assert!(tx_context::sender(ctx) == get_owner_address(admin), ENotAuthorized);
         assert!(vector::length(&license) > 0, EInvalidLicense);
+        assert!(!table::contains(&role_registry.roles, addr), EAddressAlreadyExists);
         
         let name_str = string::utf8(name);
         let license_str = string::utf8(license);
@@ -306,9 +311,9 @@ module drugledger::drug_ledger {
             license: license_str,
             address: addr,
             verified: true,
-            registration_date: tx_context::epoch_timestamp_ms(ctx),
+            registration_date: clock::timestamp_ms(clock),
             drug_count: 0,
-        };
+        };  
         
         // Assign manufacturer role
         assign_role(admin, role_registry, addr, ROLE_MANUFACTURER, ctx);
@@ -322,42 +327,6 @@ module drugledger::drug_ledger {
             address: addr,
         });
     }
-
-    /// Revokes a manufacturer's registration and role.
-    /// Only admin can revoke manufacturers.
-    /// 
-    /// # Arguments
-    /// * `admin` - The admin object
-    /// * `role_registry` - The role registry
-    /// * `manufacturer` - The manufacturer object to revoke
-    /// * `reason` - The reason for revocation
-    public entry fun revoke_manufacturer(
-        admin: &DrugLedgerAdmin,
-        role_registry: &mut RoleRegistry,
-        manufacturer: Manufacturer,
-        reason: vector<u8>,
-        ctx: &mut TxContext
-    ) {
-        assert!(tx_context::sender(ctx) == get_owner_address(admin), ENotAuthorized);
-        
-        let Manufacturer { id, name, license, address, verified: _, registration_date: _, drug_count: _ } = manufacturer;
-        
-        // Remove role
-        if (table::contains(&role_registry.roles, address)) {
-            let _ = table::remove(&mut role_registry.roles, address);
-        };
-        
-        event::emit(ManufacturerRevoked {
-            name: name,
-            license: license,
-            address: address,
-            reason: string::utf8(reason),
-        });
-        
-        object::delete(id);
-    }
-
-    // ======== Drug Management ========
 
     /// Registers a new drug and creates necessary indexing.
     /// Only manufacturers can register drugs.
@@ -375,7 +344,7 @@ module drugledger::drug_ledger {
         manufacturer_index: &mut ManufacturerIndex,
         status_index: &mut StatusIndex,
         cid: vector<u8>,
-       // clock: &Clock,
+        clock: &Clock,
         ctx: &mut TxContext
     ) {
         assert!(manufacturer.address == tx_context::sender(ctx), ENotAuthorized);
@@ -385,7 +354,7 @@ module drugledger::drug_ledger {
         counter.counter = counter.counter + 1;
         
         let cid_str = string::utf8(cid);
-        let timestamp =  tx_context::epoch_timestamp_ms(ctx);
+            let timestamp =  clock::timestamp_ms(clock);
         
         // Add mut keyword here
         let mut drug = Drug {
@@ -449,7 +418,7 @@ module drugledger::drug_ledger {
         status_index: &mut StatusIndex,
         new_status: u8,
         role_registry: &RoleRegistry,
-        //clock: &Clock,
+        clock: &Clock,
         ctx: &mut TxContext
     ) {
         let sender = tx_context::sender(ctx);
@@ -487,7 +456,7 @@ module drugledger::drug_ledger {
         
         // Update drug status
         drug.status = new_status;
-        drug.last_updated = tx_context::epoch_timestamp_ms(ctx);
+        drug.last_updated = clock::timestamp_ms(clock);
         
         event::emit(DrugStatusChanged {
             drug_id: drug.drug_id,
@@ -515,7 +484,7 @@ module drugledger::drug_ledger {
         description: vector<u8>,
         severity: u8,
         category: vector<u8>,
-        //clock: &Clock,
+        clock: &Clock,
         ctx: &mut TxContext
     ) {
         assert!(severity >= 1 && severity <= 5, EInvalidInput);
@@ -523,7 +492,7 @@ module drugledger::drug_ledger {
         let issue = Issue {
             name: string::utf8(name),
             description: string::utf8(description),
-            date: tx_context::epoch_timestamp_ms(ctx),
+            date: clock::timestamp_ms(clock),
             owner: tx_context::sender(ctx),
             resolved: false,
             reason: string::utf8(b""),
@@ -540,7 +509,7 @@ module drugledger::drug_ledger {
         
         // Update drug verification status
         drug.verified = false;
-        drug.last_updated =tx_context::epoch_timestamp_ms(ctx);
+        drug.last_updated = clock::timestamp_ms(clock);
         
         event::emit(IssueOpened {
             drug_id: drug.drug_id,
@@ -564,7 +533,7 @@ module drugledger::drug_ledger {
         drug: &mut Drug,
         issue_id: u64,
         reason: vector<u8>,
-        //clock: &Clock,
+        clock: &Clock,
         ctx: &mut TxContext
     ) {
         let issues: &mut IssueCollection = df::borrow_mut(&mut drug.id, b"issues");
@@ -579,7 +548,7 @@ module drugledger::drug_ledger {
         assert!(issue.owner == sender || drug.manufacturer == sender, ENotIssueOwner);
         
         // Update issue
-        let current_time = tx_context::epoch_timestamp_ms(ctx);
+        let current_time = clock::timestamp_ms(clock);
         let resolution_time = current_time - issue.date;
         
         issue.reason = string::utf8(reason);
@@ -669,7 +638,7 @@ module drugledger::drug_ledger {
         drug_id: u64,
         entity: vector<u8>,
         action: vector<u8>,
-       // clock: &Clock,
+        clock: &Clock,
         ctx: &mut TxContext
     ) {
         event::emit(Log {
@@ -677,7 +646,7 @@ module drugledger::drug_ledger {
             entity: string::utf8(entity),
             action: string::utf8(action),
             from: tx_context::sender(ctx),
-            timestamp:tx_context::epoch_timestamp_ms(ctx),
+            timestamp: clock::timestamp_ms(clock),
         });
     }
 
@@ -784,6 +753,69 @@ module drugledger::drug_ledger {
         }
     }
 
+    /// Gets drugs that need regulatory attention in priority order.
+    /// 
+    /// # Arguments
+    /// * `status_index` - The status index
+    /// * `max_count` - Maximum number of drugs to return (0 = use default)
+    /// * `include_draft` - Whether to include drugs in DRAFT status
+    /// * `include_active` - Whether to include drugs in ACTIVE status
+    /// * `include_recalled` - Whether to include drugs in RECALLED status
+    /// 
+    /// # Returns
+    /// * A vector of drug IDs requiring attention
+    public fun get_regulatory_priority_drugs(
+        status_index: &StatusIndex,
+        max_count: u64,
+        include_draft: bool,
+        include_active: bool,
+        include_recalled: bool
+    ): vector<u64> {
+        // Use a reasonable default and cap
+        let actual_max = if (max_count == 0) { 20 } else if (max_count > 100) { 100 } else { max_count };
+        
+        // Initialize result vector
+        let mut result = vector::empty<u64>();
+        
+        // Add all drugs in DRAFT status (priority 1)
+        if (include_draft) {
+            let draft_drugs = get_drugs_by_status(status_index, 0); // DRAFT status
+            let mut i = 0;
+            let len = vector::length(&draft_drugs);
+            
+            while (i < len && vector::length(&result) < actual_max) {
+                vector::push_back(&mut result, *vector::borrow(&draft_drugs, i));
+                i = i + 1;
+            };
+        };
+        
+        // If we still have room, add ACTIVE drugs (priority 2)
+        if (include_active && vector::length(&result) < actual_max) {
+            let active_drugs = get_drugs_by_status(status_index, 1); // ACTIVE status
+            let mut i = 0;
+            let len = vector::length(&active_drugs);
+            
+            while (i < len && vector::length(&result) < actual_max) {
+                vector::push_back(&mut result, *vector::borrow(&active_drugs, i));
+                i = i + 1;
+            };
+        };
+        
+        // If we still have room, add RECALLED drugs (priority 3)
+        if (include_recalled && vector::length(&result) < actual_max) {
+            let recalled_drugs = get_drugs_by_status(status_index, 2); // RECALLED status
+            let mut i = 0;
+            let len = vector::length(&recalled_drugs);
+            
+            while (i < len && vector::length(&result) < actual_max) {
+                vector::push_back(&mut result, *vector::borrow(&recalled_drugs, i));
+                i = i + 1;
+            };
+        };
+        
+        result
+    }
+
     // ======== Upgrade Support ========
 
     /// Upgrades the contract version.
@@ -825,5 +857,239 @@ module drugledger::drug_ledger {
     /// * The owner address
     fun get_owner_address(admin: &DrugLedgerAdmin): address {
         admin.owner
+    }
+
+    /// Gets the ID of a drug.
+    /// 
+    /// # Arguments
+    /// * `drug` - The drug object
+    /// 
+    /// # Returns
+    /// * The drug ID
+    public fun get_drug_id(drug: &Drug): u64 {
+        drug.drug_id
+    }
+
+    /// Gets the status of a drug.
+    /// 
+    /// # Arguments
+    /// * `drug` - The drug object
+    /// 
+    /// # Returns
+    /// * The drug status
+    public fun get_drug_status(drug: &Drug): u8 {
+        drug.status
+    }
+
+    /// Internal function to update a drug's status that can be called from other modules.
+    /// Updates the drug status and last updated timestamp.
+    /// 
+    /// # Arguments
+    /// * `drug` - The drug object to update
+    /// * `status_index` - The status index
+    /// * `new_status` - The new status value
+    /// * `timestamp` - The timestamp for the update
+    public fun update_drug_status_internal(
+        drug: &mut Drug,
+        status_index: &mut StatusIndex,
+        new_status: u8,
+        timestamp: u64
+    ) {
+        let old_status = drug.status;
+        
+        // Status must be valid (0-3)
+        assert!(new_status <= 3, EInvalidInput);
+        
+        // Remove from old status index
+        if (vec_map::contains(&status_index.by_status, &old_status)) {
+            let status_drugs = vec_map::get_mut(&mut status_index.by_status, &old_status);
+            let (contains, idx) = vector::index_of(status_drugs, &drug.drug_id);
+            if (contains) {
+                vector::remove(status_drugs, idx);
+            };
+        };
+        
+        // Add to new status index
+        if (!vec_map::contains(&status_index.by_status, &new_status)) {
+            vec_map::insert(&mut status_index.by_status, new_status, vector::empty<u64>());
+        };
+        
+        let status_drugs = vec_map::get_mut(&mut status_index.by_status, &new_status);
+        vector::push_back(status_drugs, drug.drug_id);
+        
+        // Update drug status
+        drug.status = new_status;
+        drug.last_updated = timestamp;
+    }
+
+    /// Checks if an address has a specific role.
+    /// 
+    /// # Arguments
+    /// * `role_registry` - The role registry
+    /// * `addr` - The address to check
+    /// * `role` - The role to check for
+    /// 
+    /// # Returns
+    /// * true if the address has the specified role, false otherwise
+    public fun has_role(role_registry: &RoleRegistry, addr: address, role: u8): bool {
+        if (table::contains(&role_registry.roles, addr)) {
+            *table::borrow(&role_registry.roles, addr) == role
+        } else {
+            false
+        }
+    }
+
+    /// Checks if an address is an admin.
+    /// 
+    /// # Arguments
+    /// * `role_registry` - The role registry
+    /// * `addr` - The address to check
+    /// 
+    /// # Returns
+    /// * true if the address is an admin, false otherwise
+    public fun is_admin(role_registry: &RoleRegistry, addr: address): bool {
+        has_role(role_registry, addr, ROLE_ADMIN)
+    }
+
+    /// Checks if an address is a manufacturer.
+    /// 
+    /// # Arguments
+    /// * `role_registry` - The role registry
+    /// * `addr` - The address to check
+    /// 
+    /// # Returns
+    /// * true if the address is a manufacturer, false otherwise
+    public fun is_manufacturer(role_registry: &RoleRegistry, addr: address): bool {
+        has_role(role_registry, addr, ROLE_MANUFACTURER)
+    }
+
+    /// Checks if an address is a regulator.
+    /// 
+    /// # Arguments
+    /// * `role_registry` - The role registry
+    /// * `addr` - The address to check
+    /// 
+    /// # Returns
+    /// * true if the address is a regulator, false otherwise
+    public fun is_regulator(role_registry: &RoleRegistry, addr: address): bool {
+        has_role(role_registry, addr, ROLE_REGULATOR)
+    }
+
+    /// Checks if an address is a distributor.
+    /// 
+    /// # Arguments
+    /// * `role_registry` - The role registry
+    /// * `addr` - The address to check
+    /// 
+    /// # Returns
+    /// * true if the address is a distributor, false otherwise
+    public fun is_distributor(role_registry: &RoleRegistry, addr: address): bool {
+        has_role(role_registry, addr, ROLE_DISTRIBUTOR)
+    }
+
+    /// Revokes a manufacturer's registration and role.
+    /// Only admin can revoke manufacturers.
+    /// 
+    /// # Arguments
+    /// * `admin` - The admin object
+    /// * `role_registry` - The role registry
+    /// * `manufacturer` - The manufacturer object to revoke
+    /// * `reason` - The reason for revocation
+    public entry fun revoke_manufacturer(
+        admin: &DrugLedgerAdmin,
+        role_registry: &mut RoleRegistry,
+        manufacturer: Manufacturer,
+        reason: vector<u8>,
+        ctx: &mut TxContext
+    ) {
+        assert!(tx_context::sender(ctx) == get_owner_address(admin), ENotAuthorized);
+        
+        let Manufacturer { id, name, license, address, verified: _, registration_date: _, drug_count: _ } = manufacturer;
+        
+        // Remove role
+        if (table::contains(&role_registry.roles, address)) {
+            let _ = table::remove(&mut role_registry.roles, address);
+        };
+        
+        event::emit(ManufacturerRevoked {
+            name: name,
+            license: license,
+            address: address,
+            reason: string::utf8(reason),
+        });
+        
+        object::delete(id);
+    }
+
+    /// Revokes any role from an address.
+    /// Only admin can revoke roles.
+    /// 
+    /// # Arguments
+    /// * `admin` - The admin object
+    /// * `role_registry` - The role registry
+    /// * `addr` - The address to revoke role from
+    /// * `reason` - The reason for revocation
+    public entry fun revoke_role(
+        admin: &DrugLedgerAdmin,
+        role_registry: &mut RoleRegistry,
+        addr: address,
+        reason: vector<u8>,
+        ctx: &mut TxContext
+    ) {
+        // Verify caller is admin
+        assert!(tx_context::sender(ctx) == get_owner_address(admin), ENotAuthorized);
+        
+        // Check if address has a role
+        assert!(table::contains(&role_registry.roles, addr), EInvalidInput);
+        
+        // Get current role for event emission
+        let role = *table::borrow(&role_registry.roles, addr);
+        
+        // Remove role
+        let _ = table::remove(&mut role_registry.roles, addr);
+        
+        // Emit event for role revocation
+        event::emit(RoleRevoked {
+            address: addr,
+            role,
+            reason: string::utf8(reason),
+            revoked_by: tx_context::sender(ctx),
+        });
+    }
+
+    /// Transfers admin access to another address.
+    /// Only the current admin can transfer admin access.
+    /// 
+    /// # Arguments
+    /// * `admin` - The admin object
+    /// * `role_registry` - The role registry
+    /// * `new_admin` - The address to transfer admin access to
+    public entry fun transfer_admin(
+        admin: &mut DrugLedgerAdmin,
+        role_registry: &mut RoleRegistry,
+        new_admin: address,
+        ctx: &mut TxContext
+    ) {
+        // Verify caller is the current admin
+        let sender = tx_context::sender(ctx);
+        assert!(sender == get_owner_address(admin), ENotAuthorized);
+        
+        // Update admin object
+        admin.owner = new_admin;
+        
+        // First check if the new admin already has a role
+        if (table::contains(&role_registry.roles, new_admin)) {
+            // If new admin already has a role, update it to admin
+            let _ = table::remove(&mut role_registry.roles, new_admin);
+        };
+        
+        // Assign admin role to new admin
+        table::add(&mut role_registry.roles, new_admin, ROLE_ADMIN);
+        
+        // Emit event
+        event::emit(AdminTransferred {
+            previous_admin: sender,
+            new_admin,
+        });
     }
 }
