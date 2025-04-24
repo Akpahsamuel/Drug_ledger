@@ -73,36 +73,36 @@ export default function DrugStatusManager() {
 
   return (
     <Box>
-      <Heading size="4" mb="4">Manage Drug Statuses</Heading>
+      <Heading size="4" mb="4" style={{ color: "#000" }}>Manage Drug Statuses</Heading>
       
       <Card mb="4">
-        <Heading size="3" mb="2">Update Drug Status</Heading>
+        <Heading size="3" mb="2" style={{ color: "#000" }}>Update Drug Status</Heading>
         
         <Flex direction="column" gap="3" mb="4">
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="drug-object-id">Drug Object ID</label>
+            <label htmlFor="drug-object-id" style={{ color: "#000" }}>Drug Object ID</label>
             <input
               id="drug-object-id"
               type="text"
               placeholder="Drug Object ID (0x...)" 
               value={drugObjectId}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDrugObjectId(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff" }}
             />
           </div>
 
           <Select.Root value={selectedStatus} onValueChange={setSelectedStatus}>
             <Select.Trigger />
-            <Select.Content>
-              <Select.Item value="0">Draft</Select.Item>
-              <Select.Item value="1">Active</Select.Item>
-              <Select.Item value="2">Recalled</Select.Item>
-              <Select.Item value="3">Expired</Select.Item>
+            <Select.Content style={{ backgroundColor: "#fff" }}>
+              <Select.Item value="0" style={{ color: "#000", backgroundColor: "#fff" }}>Draft</Select.Item>
+              <Select.Item value="1" style={{ color: "#000", backgroundColor: "#fff" }}>Active</Select.Item>
+              <Select.Item value="2" style={{ color: "#000", backgroundColor: "#fff" }}>Recalled</Select.Item>
+              <Select.Item value="3" style={{ color: "#000", backgroundColor: "#fff" }}>Expired</Select.Item>
             </Select.Content>
           </Select.Root>
         </Flex>
         
-        <Button onClick={handleUpdateStatus}>Update Status</Button>
+        <Button onClick={handleUpdateStatus} style={{ color: "#000", backgroundColor: "#fff" }}>Update Status</Button>
         
         {error && <Text color="red" mt="2">{error}</Text>}
         {success && <Text color="green" mt="2">{success}</Text>}

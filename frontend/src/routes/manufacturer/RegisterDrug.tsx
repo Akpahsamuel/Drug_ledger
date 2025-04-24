@@ -171,7 +171,7 @@ export default function RegisterDrug() {
 
   return (
     <Box>
-      <Heading size="4" mb="4">Register New Drug</Heading>
+      <Heading size="4" mb="4" style={{ color: "#000" }}>Register New Drug</Heading>
       
       {manufacturerError && (
         <Card mb="4" style={{ backgroundColor: 'rgba(255, 0, 0, 0.1)' }}>
@@ -180,58 +180,58 @@ export default function RegisterDrug() {
       )}
       
       <Card mb="4">
-        <Heading size="3" mb="2">Drug Information</Heading>
+        <Heading size="3" mb="2" style={{ color: "#000" }}>Drug Information</Heading>
         
         <Flex direction="column" gap="3" mb="4">
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="drug-name">Drug Name</label>
+            <label htmlFor="drug-name" style={{ color: "#000" }}>Drug Name</label>
             <input
               id="drug-name"
               type="text"
               placeholder="Drug Name" 
               value={drugName}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDrugName(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff" }}
             />
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="drug-description">Description</label>
+            <label htmlFor="drug-description" style={{ color: "#000" }}>Description</label>
             <input
               id="drug-description"
               type="text"
               placeholder="Drug Description" 
               value={description}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff" }}
             />
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="manufacturer-info">Manufacturer Info</label>
+            <label htmlFor="manufacturer-info" style={{ color: "#000" }}>Manufacturer Info</label>
             <input
               id="manufacturer-info"
               type="text"
               placeholder="Manufacturer Information" 
               value={manufacturerInfo}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setManufacturerInfo(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff" }}
             />
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="drug-cid">Composition IPFS CID</label>
+            <label htmlFor="drug-cid" style={{ color: "#000" }}>Composition IPFS CID</label>
             <input
               id="drug-cid"
               type="text"
               placeholder="IPFS Content ID (CID)" 
               value={cid}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCid(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff" }}
             />
           </div>
 
-          <Text size="2" color="gray">
+          <Text size="2" color="gray" style={{ color: "#000" }}>
             Upload your drug metadata to IPFS first and provide the CID here.
             The CID should point to a JSON file with all required drug information.
           </Text>

@@ -406,7 +406,7 @@ export default function RegulatorDashboard() {
   if (!currentAccount) {
     return (
       <Container size="3">
-        <Box py="6">
+        <Box py="6" style={{ color: "#000" }}>
           <Heading size="6" mb="4">Regulator Dashboard</Heading>
           <Text size="3">Please connect your wallet to access the regulator dashboard.</Text>
         </Box>
@@ -416,12 +416,12 @@ export default function RegulatorDashboard() {
 
   return (
     <Container size="3">
-      <Box py="6">
+      <Box py="6" style={{ color: "#000" }}>
         <Heading size="6" mb="4">Regulator Dashboard</Heading>
         
         <RoleCheckDisabledBanner />
         
-        <Text size="3" mb="4">
+        <Text size="3" mb="4" style={{ color: "#000" }}>
           Connected as: {currentAccount.address}
           {regulatorObject ? 
             <Text as="span" color="green"> (Regulator object found)</Text> : 
@@ -431,15 +431,15 @@ export default function RegulatorDashboard() {
         
         {regulatorInfo && (
           <Card mb="4">
-            <Heading size="3" mb="2">Regulator Information</Heading>
+            <Heading size="3" mb="2" style={{ color: "#000" }}>Regulator Information</Heading>
             <Flex direction="column" gap="2">
               <Flex justify="between">
-                <Text weight="bold">Name:</Text>
-                <Text>{regulatorInfo.name}</Text>
+                <Text weight="bold" style={{ color: "#000" }}>Name:</Text>
+                <Text style={{ color: "#000" }}>{regulatorInfo.name}</Text>
               </Flex>
               <Flex justify="between">
-                <Text weight="bold">Jurisdiction:</Text>
-                <Text>{regulatorInfo.jurisdiction}</Text>
+                <Text weight="bold" style={{ color: "#000" }}>Jurisdiction:</Text>
+                <Text style={{color: "#000"}}>{regulatorInfo.jurisdiction}</Text>
               </Flex>
             </Flex>
           </Card>
@@ -458,8 +458,8 @@ export default function RegulatorDashboard() {
         )}
         
         <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
-          <Tabs.List>
-            <Tabs.Trigger value="pending">
+          <Tabs.List style={{ color: "#000" }}>
+            <Tabs.Trigger value="pending" style={{color: "#000"}}>
               Pending Approval
               {pendingDrugs.length > 0 && (
                 <span style={{ 
@@ -474,7 +474,7 @@ export default function RegulatorDashboard() {
                 </span>
               )}
             </Tabs.Trigger>
-            <Tabs.Trigger value="active">
+            <Tabs.Trigger value="active" style={{color: "#000"}}>
               Active Drugs
               {activeDrugs.length > 0 && (
                 <span style={{ 
@@ -489,7 +489,7 @@ export default function RegulatorDashboard() {
                 </span>
               )}
             </Tabs.Trigger>
-            <Tabs.Trigger value="recalled">
+            <Tabs.Trigger value="recalled" style={{color: "#000"}}>
               Recalled Drugs
               {recalledDrugs.length > 0 && (
                 <span style={{ 
@@ -506,22 +506,22 @@ export default function RegulatorDashboard() {
             </Tabs.Trigger>
           </Tabs.List>
 
-          <Box pt="4">
+          <Box pt="4" style={{ color: "#000" }}>
             {/* Pending Approval Tab Content */}
             <Tabs.Content value="pending">
               {loadingDrugs ? (
-                <Text>Loading pending drugs...</Text>
+                <Text style={{color: "#000"}}>Loading pending drugs...</Text>
               ) : pendingDrugs.length === 0 ? (
                 <Card>
-                  <Text>No drugs pending approval.</Text>
+                  <Text style={{color: "#000"}}>No drugs pending approval.</Text>
                 </Card>
               ) : (
                 <Card>
-                  <Text size="2" mb="2">Drugs requiring regulatory approval:</Text>
+                  <Text size="2" mb="2" style={{color: "#000"}}>Drugs requiring regulatory approval:</Text>
                   
                   <Table.Root>
                     <Table.Header>
-                      <Table.Row>
+                      <Table.Row style={{color: "#000"}}>
                         <Table.ColumnHeaderCell>Drug ID</Table.ColumnHeaderCell>
                         <Table.ColumnHeaderCell>Manufacturer</Table.ColumnHeaderCell>
                         <Table.ColumnHeaderCell>Created</Table.ColumnHeaderCell>
@@ -531,15 +531,15 @@ export default function RegulatorDashboard() {
                       </Table.Row>
                     </Table.Header>
                     
-                    <Table.Body>
+                    <Table.Body style={{color: "#000"}}>
                       {pendingDrugs.map((drug) => (
                         <Table.Row key={drug.id}>
-                          <Table.Cell>{drug.drugId}</Table.Cell>
-                          <Table.Cell title={drug.manufacturer}>
+                          <Table.Cell style={{color: "#000"}}>{drug.drugId}</Table.Cell>
+                          <Table.Cell title={drug.manufacturer} style={{color: "#000"}}>
                             {drug.manufacturer.substring(0, 10)}...
                           </Table.Cell>
-                          <Table.Cell>{formatDate(drug.createdAt)}</Table.Cell>
-                          <Table.Cell>
+                          <Table.Cell style={{color: "#000"}}>{formatDate(drug.createdAt)}</Table.Cell>
+                          <Table.Cell >
                             <span style={{ 
                               padding: '2px 8px', 
                               borderRadius: '4px',
@@ -588,35 +588,35 @@ export default function RegulatorDashboard() {
             {/* Active Drugs Tab Content */}
             <Tabs.Content value="active">
               {loadingDrugs ? (
-                <Text>Loading active drugs...</Text>
+                <Text style={{ color: "#000" }}>Loading active drugs...</Text>
               ) : activeDrugs.length === 0 ? (
                 <Card>
-                  <Text>No active drugs found.</Text>
+                  <Text style={{ color: "#000" }}>No active drugs found.</Text>
                 </Card>
               ) : (
                 <Card>
-                  <Text size="2" mb="2">Active drugs that can be recalled or reported:</Text>
+                  <Text size="2" mb="2" style={{ color: "#000" }}>Active drugs that can be recalled or reported:</Text>
                   
                   <Table.Root>
                     <Table.Header>
                       <Table.Row>
-                        <Table.ColumnHeaderCell>Drug ID</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell>Manufacturer</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell>Created</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell>Verified</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell style={{ color: "#000" }}>Drug ID</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell style={{ color: "#000" }}>Manufacturer</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell style={{ color: "#000" }}>Created</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell style={{ color: "#000" }}>Status</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell style={{ color: "#000" }}>Verified</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell style={{ color: "#000" }}>Actions</Table.ColumnHeaderCell>
                       </Table.Row>
                     </Table.Header>
                     
                     <Table.Body>
                       {activeDrugs.map((drug) => (
                         <Table.Row key={drug.id}>
-                          <Table.Cell>{drug.drugId}</Table.Cell>
-                          <Table.Cell title={drug.manufacturer}>
+                          <Table.Cell style={{ color: "#000" }}>{drug.drugId}</Table.Cell>
+                          <Table.Cell title={drug.manufacturer} style={{color: "#000"}}>
                             {drug.manufacturer.substring(0, 10)}...
                           </Table.Cell>
-                          <Table.Cell>{formatDate(drug.createdAt)}</Table.Cell>
+                          <Table.Cell style={{ color: "#000" }}>{formatDate(drug.createdAt)}</Table.Cell>
                           <Table.Cell>
                             <span style={{ 
                               padding: '2px 8px', 
@@ -629,8 +629,8 @@ export default function RegulatorDashboard() {
                           </Table.Cell>
                           <Table.Cell>
                             {drug.verified ? 
-                              <Text color="green">Yes</Text> : 
-                              <Text color="red">No</Text>
+                              <Text color="green" style={{ color: "#000" }}>Yes</Text> : 
+                              <Text color="red" style={{ color: "#000" }}>No</Text>
                             }
                           </Table.Cell>
                           <Table.Cell>
@@ -692,35 +692,35 @@ export default function RegulatorDashboard() {
             {/* Recalled Drugs Tab Content */}
             <Tabs.Content value="recalled">
               {loadingDrugs ? (
-                <Text>Loading recalled drugs...</Text>
+                <Text style={{ color: "#000" }}>Loading recalled drugs...</Text>
               ) : recalledDrugs.length === 0 ? (
                 <Card>
-                  <Text>No recalled drugs found.</Text>
+                  <Text style={{ color: "#000" }}>No recalled drugs found.</Text>
                 </Card>
               ) : (
                 <Card>
-                  <Text size="2" mb="2">Drugs that have been recalled:</Text>
+                  <Text size="2" mb="2" style={{ color: "#000" }}>Drugs that have been recalled:</Text>
                   
                   <Table.Root>
                     <Table.Header>
                       <Table.Row>
-                        <Table.ColumnHeaderCell>Drug ID</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell>Manufacturer</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell>Created</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell>Verified</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell style={{ color: "#000" }}>Drug ID</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell style={{ color: "#000" }}>Manufacturer</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell style={{ color: "#000" }}>Created</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell style={{ color: "#000" }}>Status</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell style={{ color: "#000" }}>Verified</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell style={{ color: "#000" }}>Actions</Table.ColumnHeaderCell>
                       </Table.Row>
                     </Table.Header>
                     
                     <Table.Body>
                       {recalledDrugs.map((drug) => (
                         <Table.Row key={drug.id}>
-                          <Table.Cell>{drug.drugId}</Table.Cell>
-                          <Table.Cell title={drug.manufacturer}>
+                          <Table.Cell style={{ color: "#000" }}>{drug.drugId}</Table.Cell>
+                          <Table.Cell title={drug.manufacturer} style={{color: "#000"}}>
                             {drug.manufacturer.substring(0, 10)}...
                           </Table.Cell>
-                          <Table.Cell>{formatDate(drug.createdAt)}</Table.Cell>
+                          <Table.Cell style={{ color: "#000" }}>{formatDate(drug.createdAt)}</Table.Cell>
                           <Table.Cell>
                             <span style={{ 
                               padding: '2px 8px', 
@@ -733,8 +733,8 @@ export default function RegulatorDashboard() {
                           </Table.Cell>
                           <Table.Cell>
                             {drug.verified ? 
-                              <Text color="green">Yes</Text> : 
-                              <Text color="red">No</Text>
+                              <Text color="green" style={{ color: "#000" }}>Yes</Text> : 
+                              <Text color="red" style={{ color: "#000" }}>No</Text>
                             }
                           </Table.Cell>
                           <Table.Cell>
@@ -774,14 +774,14 @@ export default function RegulatorDashboard() {
         
         {/* View Drug Modal */}
         <Dialog.Root open={!!selectedDrug && !isApproving && !isRecalling && !isReporting && !isSettingOversight} onOpenChange={(open) => !open && setSelectedDrug(null)}>
-          <Dialog.Content>
+          <Dialog.Content style={{ color: "#000", backgroundColor: "#fff" }}>
             <Dialog.Title>Drug Details</Dialog.Title>
             <Dialog.Description size="2" mb="4">
               Detailed information about the selected drug.
             </Dialog.Description>
             
             {selectedDrug && (
-              <Box>
+              <Box style={{ color: "#000" }}>
                 <Flex direction="column" gap="2">
                   <Flex justify="between">
                     <Text weight="bold">Drug ID:</Text>
@@ -888,7 +888,7 @@ export default function RegulatorDashboard() {
         
         {/* Approve Drug Modal */}
         <Dialog.Root open={!!selectedDrug && isApproving} onOpenChange={(open) => !open && setIsApproving(false)}>
-          <Dialog.Content>
+          <Dialog.Content style={{ color: "#000", backgroundColor: "#fff" }}>
             <Dialog.Title>Approve Drug</Dialog.Title>
             <Dialog.Description size="2" mb="4">
               Approve drug {selectedDrug?.drugId} for distribution.
@@ -916,7 +916,7 @@ export default function RegulatorDashboard() {
         
         {/* Recall Drug Modal */}
         <Dialog.Root open={!!selectedDrug && isRecalling} onOpenChange={(open) => !open && setIsRecalling(false)}>
-          <Dialog.Content>
+          <Dialog.Content style={{ color: "#000", backgroundColor: "#fff" }}>
             <Dialog.Title>Recall Drug</Dialog.Title>
             <Dialog.Description size="2" mb="4">
               Recall drug {selectedDrug?.drugId} from distribution.
@@ -960,7 +960,7 @@ export default function RegulatorDashboard() {
         
         {/* Report Drug Modal */}
         <Dialog.Root open={!!selectedDrug && isReporting} onOpenChange={(open) => !open && setIsReporting(false)}>
-          <Dialog.Content>
+          <Dialog.Content style={{ color: "#000", backgroundColor: "#fff" }}>
             <Dialog.Title>File Regulatory Report</Dialog.Title>
             <Dialog.Description size="2" mb="4">
               File a report for drug {selectedDrug?.drugId}.
@@ -1017,7 +1017,7 @@ export default function RegulatorDashboard() {
         
         {/* Set Oversight Requirements Modal */}
         <Dialog.Root open={!!selectedDrug && isSettingOversight} onOpenChange={(open) => !open && setIsSettingOversight(false)}>
-          <Dialog.Content>
+          <Dialog.Content style={{ color: "#000", backgroundColor: "#fff" }}>
             <Dialog.Title>Set Oversight Requirements</Dialog.Title>
             <Dialog.Description size="2" mb="4">
               Set regulatory oversight requirements for drug {selectedDrug?.drugId}.

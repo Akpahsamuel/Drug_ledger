@@ -164,17 +164,17 @@ export default function RegulatorManager() {
 
   return (
     <Box>
-      <Heading size="4" mb="4">Manage Regulators</Heading>
+      <Heading size="4" mb="4" style={{ color: "#000" }}>Manage Regulators</Heading>
       
       {regulatorObjData?.data?.[0] && (
         <Card mb="4" style={{ backgroundColor: 'rgba(0, 255, 0, 0.1)' }}>
-          <Heading size="3" mb="2">✅ You are registered as a regulator</Heading>
-          <Text>You can now approve and verify drugs in the Regulator Dashboard.</Text>
+          <Heading size="3" mb="2" style={{ color: "#000" }}>✅ You are registered as a regulator</Heading>
+          <Text style={{ color: "#000" }}>You can now approve and verify drugs in the Regulator Dashboard.</Text>
         </Card>
       )}
       
       <Card mb="4">
-        <Heading size="3" mb="2">Register New Regulator</Heading>
+        <Heading size="3" mb="2" style={{ color: "#000" }}>Register New Regulator</Heading>
         
         {currentAccount && (
           <Button 
@@ -188,38 +188,38 @@ export default function RegulatorManager() {
         
         <Flex direction="column" gap="3" mb="4">
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="regulator-address">Regulator Address</label>
+            <label htmlFor="regulator-address" style={{ color: "#000" }}>Regulator Address</label>
             <input
               id="regulator-address"
               type="text"
               placeholder="Regulator Address" 
               value={regulatorAddress}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRegulatorAddress(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff" }}
             />
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="regulator-name">Regulator Name</label>
+            <label htmlFor="regulator-name" style={{ color: "#000" }}>Regulator Name</label>
             <input
               id="regulator-name"
               type="text"
               placeholder="Regulator Name" 
               value={regulatorName}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRegulatorName(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff" }}
             />
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="regulator-jurisdiction">Jurisdiction</label>
+            <label htmlFor="regulator-jurisdiction" style={{ color: "#000" }}>Jurisdiction</label>
             <input
               id="regulator-jurisdiction"
               type="text"
               placeholder="Jurisdiction" 
               value={regulatorJurisdiction}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRegulatorJurisdiction(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff" }}
             />
           </div>
         </Flex>

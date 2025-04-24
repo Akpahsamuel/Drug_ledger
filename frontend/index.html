@@ -22,6 +22,7 @@
       body {
         line-height: 1.5;
         -webkit-font-smoothing: antialiased;
+        /* color: #000; */
       }
       img,
       picture,
@@ -49,6 +50,18 @@
       #root,
       #__next {
         isolation: isolate;
+      }
+      
+      /* Animation for scroll indicator */
+      @keyframes scrollDown {
+        0% {
+          opacity: 1;
+          transform: translateX(-50%) translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translateX(-50%) translateY(20px);
+        }
       }
     </style>
   </head>

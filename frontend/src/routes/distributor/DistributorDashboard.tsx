@@ -379,7 +379,7 @@ export default function DistributorDashboard() {
   if (!currentAccount) {
     return (
       <Container size="3">
-        <Box py="6">
+        <Box py="6" style={{color: "#000"}}>
           <Heading size="6" mb="4">Distributor Dashboard</Heading>
           <Text size="3">Please connect your wallet to access the distributor dashboard.</Text>
         </Box>
@@ -389,7 +389,7 @@ export default function DistributorDashboard() {
 
   return (
     <Container size="3">
-      <Box py="6">
+      <Box py="6" style={{color: "#000"}}>
         <Heading size="6" mb="4">Distributor Dashboard</Heading>
         
         <RoleCheckDisabledBanner />
@@ -414,7 +414,7 @@ export default function DistributorDashboard() {
               placeholder="Destination Address" 
               value={destination}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDestination(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff"  }}
             />
           </div>
           
@@ -426,7 +426,7 @@ export default function DistributorDashboard() {
               placeholder="Drug ID" 
               value={drugId}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDrugId(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff"  }}
             />
           </div>
           
@@ -438,7 +438,7 @@ export default function DistributorDashboard() {
               placeholder="Quantity" 
               value={quantity}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuantity(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff"  }}
             />
           </div>
           
@@ -450,7 +450,7 @@ export default function DistributorDashboard() {
               placeholder="Tracking Number" 
               value={trackingNumber}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTrackingNumber(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff"  }}
             />
           </div>
           
@@ -462,7 +462,7 @@ export default function DistributorDashboard() {
               placeholder="Notes" 
               value={notes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNotes(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff"  }}
             />
           </div>
           
@@ -488,7 +488,7 @@ export default function DistributorDashboard() {
               placeholder="Shipment ID" 
               value={shipmentId}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setShipmentId(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff"  }}
             />
           </div>
           
@@ -498,7 +498,7 @@ export default function DistributorDashboard() {
               id="status"
               value={newStatus}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setNewStatus(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc',color: "#000", backgroundColor: "#fff"  }}
             >
               <option value="1">In Transit</option>
               <option value="2">Delivered</option>
@@ -514,7 +514,7 @@ export default function DistributorDashboard() {
               placeholder="Status Notes" 
               value={statusNotes}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setStatusNotes(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff"  }}
             />
           </div>
           
@@ -540,7 +540,7 @@ export default function DistributorDashboard() {
         <Text size="2" mb="2" color="gray">Click on a row to view shipment details</Text>
         <Table.Root>
           <Table.Header>
-            <Table.Row>
+            <Table.Row style={{color: "#000"}}>
               <Table.ColumnHeaderCell>ID</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Drug ID</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Destination</Table.ColumnHeaderCell>
@@ -550,7 +550,7 @@ export default function DistributorDashboard() {
               <Table.ColumnHeaderCell>Tracking</Table.ColumnHeaderCell>
             </Table.Row>
           </Table.Header>
-          <Table.Body>
+          <Table.Body style={{color: "#000"}}>
             {shipments.length === 0 ? (
               <Table.Row>
                 <Table.Cell colSpan={7} style={{ textAlign: 'center' }}>
@@ -560,13 +560,13 @@ export default function DistributorDashboard() {
             ) : (
               shipments.map((shipment) => (
                 <Table.Row key={shipment.id} onClick={() => handleShipmentRowClick(shipment)} style={{ cursor: 'pointer' }}>
-                  <Table.Cell>{shipment.shipmentId}</Table.Cell>
-                  <Table.Cell>{shipment.drugId}</Table.Cell>
-                  <Table.Cell title={shipment.destination}>
+                  <Table.Cell style={{color: "#000"}}>{shipment.shipmentId}</Table.Cell>
+                  <Table.Cell style={{color: "#000"}}>{shipment.drugId}</Table.Cell>
+                  <Table.Cell title={shipment.destination} style={{color: "#000"}}>
                     {shipment.destination.substring(0, 8)}...
                   </Table.Cell>
-                  <Table.Cell>{shipment.quantity}</Table.Cell>
-                  <Table.Cell>
+                  <Table.Cell style={{color: "#000"}}>{shipment.quantity}</Table.Cell>
+                  <Table.Cell style={{color: "#000"}}>
                     <span style={{ 
                       padding: '2px 8px', 
                       borderRadius: '4px',
@@ -580,8 +580,8 @@ export default function DistributorDashboard() {
                       {getStatusText(shipment.status)}
                     </span>
                   </Table.Cell>
-                  <Table.Cell>{formatDate(shipment.createdAt)}</Table.Cell>
-                  <Table.Cell>{shipment.tracking}</Table.Cell>
+                  <Table.Cell style={{color: "#000"}}>{formatDate(shipment.createdAt)}</Table.Cell>
+                  <Table.Cell style={{color: "#000"}}>{shipment.tracking}</Table.Cell>
                 </Table.Row>
               ))
             )}
@@ -590,7 +590,7 @@ export default function DistributorDashboard() {
         
         {/* Shipment Details Modal */}
         <Dialog.Root open={!!selectedShipment} onOpenChange={(open) => !open && setSelectedShipment(null)}>
-          <Dialog.Content style={{ maxWidth: '600px' }}>
+          <Dialog.Content style={{ maxWidth: '600px', color: "#000", backgroundColor: "#fff"  }}>
             <Dialog.Title>Shipment Details</Dialog.Title>
             <Dialog.Description size="2" mb="4">
               Detailed information about the selected shipment.

@@ -73,38 +73,38 @@ export default function DistributorManager() {
 
   return (
     <Box>
-      <Heading size="4" mb="4">Manage Distributors</Heading>
+      <Heading size="4" mb="4" style={{ color: "#000" }}>Manage Distributors</Heading>
       
       <Card mb="4">
-        <Heading size="3" mb="2">Register New Distributor</Heading>
+        <Heading size="3" mb="2" style={{ color: "#000" }}>Register New Distributor</Heading>
         
         <Flex direction="column" gap="3" mb="4">
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="distributor-name">Distributor Name</label>
+            <label htmlFor="distributor-name" style={{ color: "#000" }}>Distributor Name</label>
             <input
               id="distributor-name"
               type="text"
               placeholder="Distributor Name" 
               value={name}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff" }}
             />
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="distributor-license">License Number</label>
+            <label htmlFor="distributor-license" style={{ color: "#000" }}>License Number</label>
             <input
               id="distributor-license"
               type="text"
               placeholder="License Number" 
               value={license}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLicense(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff" }}
             />
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="distributor-address">Distributor Address</label>
+            <label htmlFor="distributor-address" style={{ color: "#000" }}>Distributor Address</label>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <input
                 id="distributor-address"
@@ -116,7 +116,9 @@ export default function DistributorManager() {
                   padding: '0.5rem', 
                   borderRadius: '4px', 
                   border: '1px solid #ccc',
-                  flexGrow: 1
+                  flexGrow: 1,
+                  color: "#000",
+                  backgroundColor: "#fff"
                 }}
               />
               <Button onClick={handleUseCurrentAccount}>
@@ -126,7 +128,7 @@ export default function DistributorManager() {
           </div>
         </Flex>
         
-        <Button onClick={handleRegisterDistributor}>Register Distributor</Button>
+        <Button onClick={handleRegisterDistributor} style={{ color: "#000", backgroundColor: "#fff" }}>Register Distributor</Button>
         
         {error && <Text color="red" mt="2">{error}</Text>}
         {success && <Text color="green" mt="2">{success}</Text>}

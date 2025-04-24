@@ -195,7 +195,7 @@ export default function ManufacturerManager() {
               placeholder="Manufacturer Address" 
               value={manufacturerAddress}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setManufacturerAddress(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff"  }}
             />
           </div>
 
@@ -207,7 +207,7 @@ export default function ManufacturerManager() {
               placeholder="Manufacturer Name" 
               value={manufacturerName}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setManufacturerName(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff" }}
             />
           </div>
 
@@ -219,7 +219,7 @@ export default function ManufacturerManager() {
               placeholder="License Number" 
               value={manufacturerLicense}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setManufacturerLicense(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff" }}
             />
           </div>
         </Flex>

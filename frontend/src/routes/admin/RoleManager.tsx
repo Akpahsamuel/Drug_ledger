@@ -116,34 +116,34 @@ export default function RoleManager() {
 
   return (
     <Box>
-      <Heading size="4" mb="4">Manage Roles</Heading>
+      <Heading size="4" mb="4" style={{ color: "#000" }}>Manage Roles</Heading>
       
       {/* Card for revoking roles */}
       <Card mb="4">
-        <Heading size="3" mb="2">Revoke Role</Heading>
+        <Heading size="3" mb="2" style={{ color: "#000" }}>Revoke Role</Heading>
         
         <Flex direction="column" gap="3" mb="4">
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="revoke-address">User Address</label>
+            <label htmlFor="revoke-address" style={{ color: "#000" }}>User Address</label>
             <input
               id="revoke-address"
               type="text"
               placeholder="User Address" 
               value={revokeAddress}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRevokeAddress(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff" }}
             />
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="revoke-reason">Reason for Revocation</label>
+            <label htmlFor="revoke-reason" style={{ color: "#000" }}>Reason for Revocation</label>
             <input
               id="revoke-reason"
               type="text"
               placeholder="Reason for revocation" 
               value={revokeReason}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRevokeReason(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff" }}
             />
           </div>
         </Flex>
@@ -153,19 +153,19 @@ export default function RoleManager() {
       
       {/* Card for transferring admin access */}
       <Card mb="4">
-        <Heading size="3" mb="2">Transfer Admin Access</Heading>
-        <Text size="2" color="gray" mb="3">Warning: This will transfer administrative rights to another address.</Text>
+        <Heading size="3" mb="2" style={{ color: "#000" }}>Transfer Admin Access</Heading>
+        <Text size="2" color="gray" mb="3" style={{ color: "#000" }}>Warning: This will transfer administrative rights to another address.</Text>
         
         <Flex direction="column" gap="3" mb="4">
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="new-admin-address">New Admin Address</label>
+            <label htmlFor="new-admin-address" style={{ color: "#000" }}>New Admin Address</label>
             <input
               id="new-admin-address"
               type="text"
               placeholder="New Admin Address" 
               value={newAdminAddress}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewAdminAddress(e.target.value)}
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', color: "#000", backgroundColor: "#fff" }}
             />
           </div>
         </Flex>

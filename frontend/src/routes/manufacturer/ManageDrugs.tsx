@@ -71,48 +71,48 @@ export default function ManageDrugs() {
   if (!currentAccount) {
     return (
       <Box>
-        <Text>Please connect your wallet to view your drugs.</Text>
+        <Text style={{ color: "#000" }}>Please connect your wallet to view your drugs.</Text>
       </Box>
     );
   }
 
   return (
     <Box>
-      <Heading size="4" mb="4">Manage Your Drugs</Heading>
+      <Heading size="4" mb="4" style={{ color: "#000" }}>Manage Your Drugs</Heading>
       
       {loading ? (
-        <Text>Loading your drugs...</Text>
+        <Text style={{ color: "#000" }}>Loading your drugs...</Text>
       ) : error ? (
-        <Text color="red">
+        <Text color="red" style={{ color: "#000" }}>
           {error}
         </Text>
       ) : drugs.length === 0 ? (
         <Card>
-          <Text>You have not registered any drugs yet.</Text>
+          <Text style={{ color: "#000" }}>You have not registered any drugs yet.</Text>
         </Card>
       ) : (
         <Card>
           <Table.Root>
             <Table.Header>
               <Table.Row>
-                <Table.ColumnHeaderCell>Drug ID</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>CID</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell style={{ color: "#000" }}>Drug ID</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell style={{ color: "#000" }}>CID</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell style={{ color: "#000" }}>Status</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell style={{ color: "#000" }}>Actions</Table.ColumnHeaderCell>
               </Table.Row>
             </Table.Header>
             
             <Table.Body>
               {drugs.map((drug) => (
                 <Table.Row key={drug.id}>
-                  <Table.Cell>{drug.drugId}</Table.Cell>
+                  <Table.Cell style={{ color: "#000" }}>{drug.drugId}</Table.Cell>
                   <Table.Cell>
-                    <Text size="2" style={{ wordBreak: "break-all" }}>
+                    <Text size="2" style={{ wordBreak: "break-all", color: "#000" }}>
                       {drug.cid}
                     </Text>
                   </Table.Cell>
                   <Table.Cell>
-                    <Text color={getStatusColor(drug.status)}>
+                    <Text color={getStatusColor(drug.status)} style={{ color: "#000" }}>
                       {getStatusLabel(drug.status)}
                     </Text>
                   </Table.Cell>

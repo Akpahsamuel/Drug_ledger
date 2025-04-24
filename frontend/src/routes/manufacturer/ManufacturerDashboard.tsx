@@ -12,7 +12,7 @@ export default function ManufacturerDashboard() {
   if (!currentAccount) {
     return (
       <Container size="3">
-        <Box py="6">
+        <Box py="6" style={{ color: "#000" }}>
           <Heading size="6" mb="4">Manufacturer Dashboard</Heading>
           <Text size="3">Please connect your wallet to access the manufacturer dashboard.</Text>
         </Box>
@@ -22,7 +22,7 @@ export default function ManufacturerDashboard() {
   
   return (
     <Container size="3">
-      <Box py="6">
+      <Box py="6" style={{ color: "#000" }}>
         <Heading size="6" mb="4">Manufacturer Dashboard</Heading>
         
         <RoleCheckDisabledBanner />
@@ -33,8 +33,8 @@ export default function ManufacturerDashboard() {
 
         <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
           <Tabs.List>
-            <Tabs.Trigger value="register">Register Drug</Tabs.Trigger>
-            <Tabs.Trigger value="manage">Manage Drugs</Tabs.Trigger>
+            <Tabs.Trigger value="register" style={{ color: "#000" }}>Register Drug</Tabs.Trigger>
+            <Tabs.Trigger value="manage" style={{ color: "#000" }}>Manage Drugs</Tabs.Trigger>
           </Tabs.List>
 
           <Box pt="4">

@@ -27,22 +27,22 @@ export default function AdminDashboard() {
   return (
     <Container size="3">
       <Box py="6">
-        <Heading size="6" mb="4">Admin Dashboard</Heading>
+        <Heading size="6" mb="4" style={{ color: "#000" }}>Admin Dashboard</Heading>
         
         <RoleCheckDisabledBanner />
         
-        <Text size="3" mb="4">
+        <Text size="3" mb="4" style={{ color: "#000" }}>
           Connected as: {currentAccount.address}
         </Text>
 
-        <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
+        <Tabs.Root value={activeTab} onValueChange={setActiveTab} style={{ color: "#000" }}>
           <Tabs.List>
-            <Tabs.Trigger value="manufacturers">Manufacturers</Tabs.Trigger>
-            <Tabs.Trigger value="regulators">Regulators</Tabs.Trigger>
-            <Tabs.Trigger value="distributors">Distributors</Tabs.Trigger>
-            <Tabs.Trigger value="roles">Roles</Tabs.Trigger>
-            <Tabs.Trigger value="drugs">Drugs</Tabs.Trigger>
-            <Tabs.Trigger value="debug">Role Checker</Tabs.Trigger>
+            <Tabs.Trigger value="manufacturers" style={{ color: "#000" }}>Manufacturers</Tabs.Trigger>
+            <Tabs.Trigger value="regulators" style={{ color: "#000" }}>Regulators</Tabs.Trigger>
+            <Tabs.Trigger value="distributors" style={{ color: "#000" }}>Distributors</Tabs.Trigger>
+            <Tabs.Trigger value="roles" style={{ color: "#000" }}>Roles</Tabs.Trigger>
+            <Tabs.Trigger value="drugs" style={{ color: "#000" }}>Drugs</Tabs.Trigger>
+            <Tabs.Trigger value="debug" style={{ color: "#000" }}>Role Checker</Tabs.Trigger>
           </Tabs.List>
 
           <Box pt="4">
