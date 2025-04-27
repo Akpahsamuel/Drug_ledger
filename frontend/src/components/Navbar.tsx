@@ -2,6 +2,7 @@ import { Box, Container, Flex, Button } from "@radix-ui/themes";
 import { ConnectButton } from "@mysten/dapp-kit";
 import { Link } from "react-router-dom";
 import { ReactNode } from "react";
+import Logo from '../assets/hero.png'
 
 const colors = {
   primary: {
@@ -87,11 +88,11 @@ const Navbar = ({ children }: NavbarProps) => {
                   color: colors.primary.main,
                   display: "flex",
                   alignItems: "center",
-                  gap: "12px",
+                  gap: "2px",
                   letterSpacing: "-0.02em",
                 }}
               >
-                <span style={{ fontSize: "1.75rem" }}>💊</span>
+                <img src={Logo} alt="logo" style={{width: 60}} />
                 DrugLedger
               </Box>
             </Link>
