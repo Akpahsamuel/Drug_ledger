@@ -1,11 +1,12 @@
 import { Box, Container, Flex, Heading, Text, Button, Card, Grid, Separator } from "@radix-ui/themes";
 import { useNavigate } from "react-router-dom";
 import { ConnectButton, useCurrentAccount } from "@mysten/dapp-kit";
-import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { motion, AnimatePresence, useAnimation } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
 import MedicineIllustration from "../components/MedicineIllustration";
 import Navbar from "../components/Navbar";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
+import { useInView } from "react-intersection-observer";
 
 // Color types
 type ColorScheme = {
@@ -13,14 +14,14 @@ type ColorScheme = {
     main: string;
     light: string;
     dark: string;
-  };
+  }
   secondary: string;
   accent: string;
   background: {
     main: string;
     light: string;
     dark: string;
-  };
+  }
   text: {
     primary: string;
     secondary: string;
@@ -39,7 +40,7 @@ type ColorScheme = {
 // Color constants
 const colors: ColorScheme = {
   primary: {
-    main: "#00ACC1",
+    main: "#1856fe",
     light: "#4DD0E1",
     dark: "#006064",
   },
@@ -56,7 +57,7 @@ const colors: ColorScheme = {
     light: "#FFFFFF",
   },
   gradient: {
-    primary: "linear-gradient(135deg, #00ACC1 0%, #006064 100%)",
+    primary: "linear-gradient(135deg, #1856fe 0%, #006064 100%)",
   },
   shadow: {
     sm: "0 2px 4px rgba(0, 0, 0, 0.05)",
@@ -267,18 +268,38 @@ export default function Home() {
   const currentAccount = useCurrentAccount();
   const [isVisible, setIsVisible] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const { ref: heroRef, inView: isHeroInView } = useInView({ triggerOnce: false, threshold: 0.5 });
+  const { ref: getStartedRef, inView: isGetStartedInView } = useInView({ triggerOnce: false, threshold: 0.5 });
+  const [ref, inView] = useInView({ triggerOnce: false, threshold: 0.3 });
+  const controls = useAnimation();
+  const { ref: rearRef, inView: rearInView } = useInView({ triggerOnce: false, threshold: 0.2 });
 
   useEffect(() => {
-    setIsVisible(true);
-  }, []);
+    const interval = setInterval(() => {
+      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [testimonials.length]);
+
+  const previousTestimonial = () => {
+    setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  };
 
   const nextTestimonial = () => {
     setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
   };
 
-  const previousTestimonial = () => {
-    setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  };
+  const testimonial = testimonials[currentTestimonial];
+
+  if (rearInView) {
+    controls.start({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: "easeOut" },
+    });
+  } else {
+    controls.start({ opacity: 0, y: 60 });
+  }
 
   return (
     <Box style={{ width: "100%", background: colors.background.main }}>
@@ -328,110 +349,124 @@ export default function Home() {
 
         {/* Content */}
         <Container size="4" style={{ position: "relative", height: "100%" }}>
-          <Flex
-            direction="row"
-            gap="8"
-            align="center"
-            justify="between"
-            style={{ 
-              minHeight: "100vh",
-              padding: "0 24px",
+      <Flex
+        ref={heroRef}
+        direction="row"
+        gap="8"
+        align="center"
+        justify="between"
+        style={{ 
+          minHeight: "100vh", 
+          padding: "0 24px", 
+          marginTop: window.innerWidth >= 1024 ? "-5vh" : "0" 
+        }}
+      >
+        {/* Left Text Content */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={isHeroInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+          transition={{ duration: 0.8 }}
+          style={{ flex: 1, maxWidth: "600px" }}
+        >
+          <Text
+            size="3"
+            style={{
+              color: colors.text.light,
+              opacity: 0.9,
+              marginBottom: "16px",
+              fontWeight: "500",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
             }}
           >
+            Blockchain-Powered Pharmaceutical Tracking
+          </Text>
+
+          <Heading
+            size="9"
+            style={{
+              color: colors.text.light,
+              lineHeight: "1.1",
+              marginBottom: "24px",
+              letterSpacing: "-0.02em",
+              fontSize: "4rem",
+              fontWeight: "800",
+            }}
+          >
+            Secure Medicine Supply Chain Management
+          </Heading>
+
+          <Text
+            size="5"
+            style={{
+              color: colors.text.light,
+              opacity: 0.9,
+              marginBottom: "32px",
+              maxWidth: "500px",
+              lineHeight: "1.6",
+              fontSize: "1.25rem",
+            }}
+          >
+            Ensure authenticity, track distribution, and maintain compliance with our blockchain-based solution.
+          </Text>
+
+          <Flex gap="4" align="center">
+            <ConnectButton />
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              style={{ flex: 1, maxWidth: "600px" }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={isHeroInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
+              transition={{ delay: 0.5, duration: 0.3 }}
             >
-              <Text
-                size="3"
-                style={{
-                  color: colors.text.light,
-                  opacity: 0.9,
-                  marginBottom: "16px",
-                  fontWeight: "500",
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                }}
-              >
-                Blockchain-Powered Pharmaceutical Tracking
+              <Text size="2" style={{ color: colors.text.light, opacity: 0.8 }}>
+                Connect your wallet to get started
               </Text>
-              <Heading
-                size="9"
-                style={{
-                  color: colors.text.light,
-                  lineHeight: "1.1",
-                marginBottom: "24px",
-                letterSpacing: "-0.02em",
-                  fontSize: "4rem",
-                  fontWeight: "800",
-                }}
-              >
-                Secure Medicine Supply Chain Management
-              </Heading>
-              <Text
-                size="5"
-                style={{
-                  color: colors.text.light,
-                  opacity: 0.9,
-                marginBottom: "32px",
-                  maxWidth: "500px",
-                lineHeight: "1.6",
-                  fontSize: "1.25rem",
-                }}
-              >
-                Ensure authenticity, track distribution, and maintain compliance with our blockchain-based solution.
-              </Text>
-              <Flex gap="4" align="center">
-                <ConnectButton />
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.5, duration: 0.3 }}
-                >
-                  <Text size="2" style={{ color: colors.text.light, opacity: 0.8 }}>
-                  Connect your wallet to get started
-                </Text>
-                </motion.div>
-              </Flex>
             </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              style={{ 
-                flex: 1,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-                <Box style={{
-                position: "relative",
+          </Flex>
+        </motion.div>
+
+        {/* Right Image Section */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={isHeroInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
+          transition={{ duration: 0.8 }}
+          style={{
+            flex: 1,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Box
+            style={{
+              position: "relative",
+              width: "100%",
+              maxWidth: "600px",
+              aspectRatio: "1",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {/* Glowing animated background circle */}
+            <Box
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
                 width: "100%",
-                maxWidth: "600px",
-                aspectRatio: "1",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}>
-                <Box style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: "100%",
-                  height: "100%",
-                  background: "radial-gradient(circle, rgba(77, 208, 225, 0.1) 0%, rgba(0, 172, 193, 0) 70%)",
-                  borderRadius: "50%",
-                  animation: "pulse 3s infinite",
-                }} />
-                <MedicineIllustration />
-                </Box>
-            </motion.div>
-            </Flex>
-          </Container>
+                height: "100%",
+                background:
+                  "radial-gradient(circle, rgba(77, 208, 225, 0.1) 0%, rgba(0, 172, 193, 0) 70%)",
+                borderRadius: "50%",
+                animation: "pulse 3s infinite",
+              }}
+            />
+            <MedicineIllustration />
+          </Box>
+        </motion.div>
+      </Flex>
+    </Container>
 
         {/* Decorative Bottom Wave */}
         {/* <Box style={{
@@ -484,23 +519,44 @@ export default function Home() {
       </Container> */}
 
       {/* Get Started Section */}
-      <Box style={{ 
+      <Box
+      ref={getStartedRef}
+      style={{
         padding: "120px 0",
         background: "#FFFFFF",
-                position: "relative",
+        position: "relative",
         overflow: "hidden",
-              }}>
-        {/* Background decoration */}
-              <Box style={{
-                position: "absolute",
+      }}
+    >
+      {/* Background decoration */}
+      <Box
+        style={{
+          position: "absolute",
           top: 0,
           left: 0,
           right: 0,
           height: "100%",
-          background: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.343-3 3 1.343 3 3 3zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23${colors.primary.main.substring(1)}' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E")`,
-        }} />
-        
-        <Container size="4">
+          background: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' 
+          xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 
+          3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 
+          3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 
+          3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 
+          3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 
+          5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.343-3 3 1.343 3 3 3zm29 22c2.76 0 
+          5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 
+          5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 
+          2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' 
+          fill='%23${colors.primary.main.substring(1)}' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E")`, 
+        }}
+      />
+
+      <Container size="4">
+        {/* Fade-in Header Texts */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isGetStartedInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.6 }}
+        >
           <Box style={{ textAlign: "center", maxWidth: "800px", margin: "0 auto 64px" }}>
             <Text
               size="3"
@@ -537,691 +593,702 @@ export default function Home() {
               Select your role in the pharmaceutical supply chain and start managing your operations with blockchain-powered security.
             </Text>
           </Box>
+        </motion.div>
 
-          <Grid columns="2" gap="6" style={{ maxWidth: "1200px", margin: "0 auto" }}>
-            {getStartedCards.map((card, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
+        {/* Card Grid */}
+        <Grid columns="2" gap="6" style={{ maxWidth: "1200px", margin: "0 auto" }}>
+          {getStartedCards.map((card, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 40 }}
+              animate={isGetStartedInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+              transition={{ duration: 0.5, delay: 0.2 + index * 0.2 }}
+            >
+              <Card
+                style={{
+                  background: "#FFFFFF",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                  borderRadius: "24px",
+                  overflow: "hidden",
+                  height: "100%",
+                  border: "1px solid rgba(0,0,0,0.05)",
+                  transition: "all 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-5px)";
+                  e.currentTarget.style.boxShadow = "0 8px 30px rgba(0,0,0,0.12)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.1)";
+                }}
               >
-                <Card
-                  style={{
-                    background: "#FFFFFF",
-                    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                    borderRadius: "24px",
-                    overflow: "hidden",
-                    height: "100%",
-                    border: "1px solid rgba(0,0,0,0.05)",
-                    transition: "all 0.3s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-5px)";
-                    e.currentTarget.style.boxShadow = "0 8px 30px rgba(0,0,0,0.12)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.1)";
-                  }}
-                >
-                  <Box>
-                  <Box style={{ 
+                <Box>
+                  <Box
+                    style={{
                       background: card.gradient,
                       padding: "32px",
                       position: "relative",
                       overflow: "hidden",
-                    }}>
-                      <Box style={{
+                    }}
+                  >
+                    <Box
+                      style={{
                         position: "absolute",
                         top: 0,
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        background: "radial-gradient(circle at 70% -10%, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 60%)",
-                      }} />
-                      <Box
-                        style={{
-                          width: "64px",
-                          height: "64px",
-                          borderRadius: "20px",
-                          background: "rgba(255,255,255,0.2)",
-                          backdropFilter: "blur(10px)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                          fontSize: "32px",
-                    marginBottom: "16px",
-                        }}
-                      >
-                        {card.icon}
+                        background:
+                          "radial-gradient(circle at 70% -10%, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 60%)",
+                      }}
+                    />
+                    <Box
+                      style={{
+                        width: "64px",
+                        height: "64px",
+                        borderRadius: "20px",
+                        background: "rgba(255,255,255,0.2)",
+                        backdropFilter: "blur(10px)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "32px",
+                        marginBottom: "16px",
+                      }}
+                    >
+                      {card.icon}
+                    </Box>
+                    <Heading size="5" style={{ color: "#FFFFFF", marginBottom: "8px" }}>
+                      {card.title}
+                    </Heading>
+                    <Text size="2" style={{ color: "rgba(255,255,255,0.9)", lineHeight: "1.6" }}>
+                      {card.description}
+                    </Text>
                   </Box>
-                      <Heading size="5" style={{ color: "#FFFFFF", marginBottom: "8px" }}>
-                        {card.title}
-                      </Heading>
-                      <Text size="2" style={{ color: "rgba(255,255,255,0.9)", lineHeight: "1.6" }}>
-                        {card.description}
-                  </Text>
-              </Box>
-                    <Box p="5">
-                      <Text size="2" style={{ color: colors.text.secondary, marginBottom: "16px" }}>
-                        Key Features:
-                      </Text>
-                      {card.features.map((feature, idx) => (
-                        <Flex key={idx} align="center" gap="2" style={{ marginBottom: "8px" }}>
-                  <Box style={{ 
+                  <Box p="5">
+                    <Text size="2" style={{ color: colors.text.secondary, marginBottom: "16px" }}>
+                      Key Features:
+                    </Text>
+                    {card.features.map((feature, idx) => (
+                      <Flex key={idx} align="center" gap="2" style={{ marginBottom: "8px" }}>
+                        <Box
+                          style={{
                             width: "20px",
                             height: "20px",
                             borderRadius: "50%",
                             background: `${card.color}15`,
                             color: card.color,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
                             fontSize: "12px",
-                          }}>
-                            ✓
+                          }}
+                        >
+                          ✓
+                        </Box>
+                        <Text size="2" style={{ color: colors.text.primary }}>
+                          {feature}
+                        </Text>
+                      </Flex>
+                    ))}
+                    <Button
+                      onClick={() => navigate(card.path)}
+                      style={{
+                        width: "100%",
+                        background: card.gradient,
+                        color: "#FFFFFF",
+                        padding: "12px",
+                        marginTop: "24px",
+                        borderRadius: "12px",
+                        border: "none",
+                        fontSize: "0.9rem",
+                        fontWeight: "600",
+                        transition: "all 0.3s ease",
+                      }}
+                    >
+                      Get Started
+                    </Button>
                   </Box>
-                          <Text size="2" style={{ color: colors.text.primary }}>
-                            {feature}
-                  </Text>
-                </Flex>
-                      ))}
-                      <Button
-                        onClick={() => navigate(card.path)}
-                        style={{
-                          width: "100%",
-                          background: card.gradient,
-                          color: "#FFFFFF",
-                          padding: "12px",
-                          marginTop: "24px",
-                          borderRadius: "12px",
-                          border: "none",
-                          fontSize: "0.9rem",
-                          fontWeight: "600",
-                          transition: "all 0.3s ease",
-                        }}
-                      >
-                        Get Started
-                      </Button>
-                    </Box>
-                  </Box>
-                </Card>
-              </motion.div>
-            ))}
-          </Grid>
-        </Container>
-              </Box>
+                </Box>
+              </Card>
+            </motion.div>
+          ))}
+        </Grid>
+      </Container>
+    </Box>
               
       {/* Features Section */}
       <Box style={{ padding: "80px 0", background: "#FFFFFF" }}>
-        <Container size="4">
-          <Box style={{ textAlign: "center", maxWidth: "800px", margin: "0 auto 64px" }}>
-            <Text
-              size="3"
-              style={{
-                color: colors.primary.main,
-                fontWeight: "500",
-                marginBottom: "16px",
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-              }}
-            >
-              Our Features
-            </Text>
-            <Heading
-              size="6"
-              style={{
-                color: colors.text.primary,
-                fontSize: "2.5rem",
-                lineHeight: "1.2",
-                marginBottom: "16px",
-              }}
-            >
-              We Are Providing World's Best Listed Medicine
-            </Heading>
-            <Text
-              size="3"
-              style={{
-                color: colors.text.secondary,
-                lineHeight: "1.6",
-              }}
-            >
-              Experience secure, transparent, and efficient pharmaceutical supply chain management
-            </Text>
-          </Box>
-
-          <Grid columns="3" gap="6" style={{ maxWidth: "1200px", margin: "0 auto" }}>
-            {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <Card
-                  style={{
-                    background: "#FFFFFF",
-                    boxShadow: colors.shadow.md,
-                    borderRadius: "16px",
-                    overflow: "hidden",
-                    height: "100%",
-                    border: `1px solid ${feature.color}15`,
-                    transition: "all 0.3s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-5px)";
-                    e.currentTarget.style.boxShadow = colors.shadow.lg;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = colors.shadow.md;
-                  }}
-                >
-                  <Box p="5">
-                    <Box
-                      style={{
-                        width: "56px",
-                        height: "56px",
-                        borderRadius: "16px",
-                        background: `${feature.color}10`,
-                        color: feature.color,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                        marginBottom: "24px",
-                        fontSize: "28px",
-                      }}
-                    >
-                      {feature.icon}
-                  </Box>
-                    <Heading
-                      size="4"
-                      style={{
-                        color: colors.text.primary,
-                        marginBottom: "12px",
-                      }}
-                    >
-                      {feature.title}
-                    </Heading>
-                    <Text
-                      size="2"
-                      style={{
-                        color: colors.text.secondary,
-                        lineHeight: "1.6",
-                      }}
-                    >
-                      {feature.description}
-                  </Text>
-              </Box>
-          </Card>
-              </motion.div>
-            ))}
-          </Grid>
-        </Container>
-        </Box>
-        
-      {/* How It Works Section */}
-      <Box style={{ 
-        padding: "120px 0",
-        background: "#FFFFFF",
-            position: "relative",
-        overflow: "hidden",
-          }}>
-        {/* Background decoration */}
-            <Box style={{
-              position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: "100%",
-          background: `linear-gradient(135deg, ${colors.primary.main}05 0%, ${colors.primary.main}02 100%)`,
-          zIndex: 0,
-        }} />
-        
-        <Container size="4" style={{ position: "relative", zIndex: 1 }}>
-          <Box style={{ textAlign: "center", maxWidth: "800px", margin: "0 auto 80px" }}>
-            <Text
-              size="3"
-              style={{
-                color: colors.primary.main,
-                fontWeight: "500",
-                marginBottom: "16px",
-                textTransform: "uppercase",
-                letterSpacing: "0.1em",
-              }}
-            >
-              Simple Steps
-            </Text>
-            <Heading
-              size="8"
-              style={{
-                color: colors.text.primary,
-                marginBottom: "24px",
-                fontSize: "3rem",
-                lineHeight: "1.2",
-              }}
-            >
-              How It Works
-          </Heading>
-            <Text
-              size="4"
-              style={{
-                color: colors.text.secondary,
-                maxWidth: "600px",
-                margin: "0 auto",
-                lineHeight: "1.6",
-              }}
-            >
-              Get started with our platform in three simple steps and transform your pharmaceutical supply chain management
-            </Text>
-          </Box>
-
-          <Grid columns="3" gap="6" style={{ maxWidth: "1200px", margin: "0 auto" }}>
-            {steps.map((step, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.2 }}
-                viewport={{ once: true }}
-              >
-                <Card
-                  style={{
-                    background: "#FFFFFF",
-                    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                    borderRadius: "24px",
-              overflow: "hidden",
-              height: "100%",
-                    border: "1px solid rgba(0,0,0,0.05)",
-                    transition: "all 0.3s ease",
-                    position: "relative",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-5px)";
-                    e.currentTarget.style.boxShadow = "0 8px 30px rgba(0,0,0,0.12)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.1)";
-                  }}
-                >
-                  <Box style={{
-                    background: step.gradient,
-                    padding: "32px",
-                    position: "relative",
-                    overflow: "hidden",
-                  }}>
-                  <Box style={{ 
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      background: "radial-gradient(circle at 70% -10%, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 60%)",
-                    }} />
-                    <Flex justify="between" align="center" style={{ marginBottom: "24px" }}>
-                      <Box
-                        style={{
-                          width: "56px",
-                          height: "56px",
-                          borderRadius: "16px",
-                          background: "rgba(255,255,255,0.2)",
-                          backdropFilter: "blur(10px)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                          fontSize: "28px",
-                        }}
-                      >
-                        {step.icon}
-                  </Box>
-                      <Text
-                        size="8"
-                        style={{
-                          color: "rgba(255,255,255,0.3)",
-                          fontWeight: "800",
-                          fontSize: "3rem",
-                          lineHeight: "1",
-                        }}
-                      >
-                        {step.number}
-                      </Text>
-                </Flex>
-                    <Heading size="5" style={{ color: "#FFFFFF", marginBottom: "12px" }}>
-                      {step.title}
-                    </Heading>
-                    <Text size="2" style={{ color: "rgba(255,255,255,0.9)", lineHeight: "1.6" }}>
-                      {step.description}
-                </Text>
-                  </Box>
-                </Card>
-              </motion.div>
-            ))}
-          </Grid>
-
-          <Box style={{ textAlign: "center", marginTop: "64px" }}>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <Button
-                size="4"
-                onClick={() => navigate("/register")}
-                style={{
-                  background: colors.primary.main,
-                  color: "#FFFFFF",
-                  padding: "0 32px",
-                  height: "56px",
-                  fontSize: "1.125rem",
-                  fontWeight: "600",
-                  borderRadius: "12px",
-                  border: "none",
-                  boxShadow: "0 4px 6px rgba(0, 172, 193, 0.2)",
-                  transition: "all 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                  e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 172, 193, 0.3)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "0 4px 6px rgba(0, 172, 193, 0.2)";
-                }}
-              >
-                Get Started Now
-                </Button>
-            </motion.div>
-              </Box>
-        </Container>
+  <motion.div
+    initial={{ opacity: 0, x: -100 }}
+    whileInView={{ opacity: 1, x: 0 }}
+    transition={{ duration: 0.6 }}
+    viewport={{ once: false, amount: 0.2 }}
+  >
+    <Container size="4">
+      <Box style={{ textAlign: "center", maxWidth: "800px", margin: "0 auto 64px" }}>
+        <Text
+          size="3"
+          style={{
+            color: colors.primary.main,
+            fontWeight: "500",
+            marginBottom: "16px",
+            textTransform: "uppercase",
+            letterSpacing: "0.05em",
+          }}
+        >
+          Our Features
+        </Text>
+        <Heading
+          size="6"
+          style={{
+            color: colors.text.primary,
+            fontSize: "2.5rem",
+            lineHeight: "1.2",
+            marginBottom: "16px",
+          }}
+        >
+          We Are Providing World's Best Listed Medicine
+        </Heading>
+        <Text
+          size="3"
+          style={{
+            color: colors.text.secondary,
+            lineHeight: "1.6",
+          }}
+        >
+          Experience secure, transparent, and efficient pharmaceutical supply chain management
+        </Text>
       </Box>
 
-      {/* Testimonials Section */}
-      <Box style={{ 
+      <Grid columns="3" gap="6" style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        {features.map((feature, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            viewport={{ once: false }}
+          >
+            <Card
+              style={{
+                background: "#FFFFFF",
+                boxShadow: colors.shadow.md,
+                borderRadius: "16px",
+                overflow: "hidden",
+                height: "100%",
+                border: `1px solid ${feature.color}15`,
+                transition: "all 0.3s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-5px)";
+                e.currentTarget.style.boxShadow = colors.shadow.lg;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = colors.shadow.md;
+              }}
+            >
+              <Box p="5">
+                <Box
+                  style={{
+                    width: "56px",
+                    height: "56px",
+                    borderRadius: "16px",
+                    background: `${feature.color}10`,
+                    color: feature.color,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: "24px",
+                    fontSize: "28px",
+                  }}
+                >
+                  {feature.icon}
+                </Box>
+                <Heading
+                  size="4"
+                  style={{
+                    color: colors.text.primary,
+                    marginBottom: "12px",
+                  }}
+                >
+                  {feature.title}
+                </Heading>
+                <Text
+                  size="2"
+                  style={{
+                    color: colors.text.secondary,
+                    lineHeight: "1.6",
+                  }}
+                >
+                  {feature.description}
+                </Text>
+              </Box>
+            </Card>
+          </motion.div>
+        ))}
+      </Grid>
+    </Container>
+  </motion.div>
+</Box>
+
+{/* How It Works Section */}
+<Box style={{ padding: "120px 0", background: "#FFFFFF", position: "relative", overflow: "hidden" }}>
+  {/* Background Decoration */}
+  <Box
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      height: "100%",
+      background: `linear-gradient(135deg, ${colors.primary.main}05 0%, ${colors.primary.main}02 100%)`,
+      zIndex: 0,
+    }}
+  />
+  <motion.div
+    initial={{ opacity: 0, x: 100 }}
+    whileInView={{ opacity: 1, x: 0 }}
+    transition={{ duration: 0.6 }}
+    viewport={{ once: false, amount: 0.2 }}
+  >
+    <Container size="4" style={{ position: "relative", zIndex: 1 }}>
+      <Box style={{ textAlign: "center", maxWidth: "800px", margin: "0 auto 80px" }}>
+        <Text
+          size="3"
+          style={{
+            color: colors.primary.main,
+            fontWeight: "500",
+            marginBottom: "16px",
+            textTransform: "uppercase",
+            letterSpacing: "0.1em",
+          }}
+        >
+          Simple Steps
+        </Text>
+        <Heading
+          size="8"
+          style={{
+            color: colors.text.primary,
+            marginBottom: "24px",
+            fontSize: "3rem",
+            lineHeight: "1.2",
+          }}
+        >
+          How It Works
+        </Heading>
+        <Text
+          size="4"
+          style={{
+            color: colors.text.secondary,
+            maxWidth: "600px",
+            margin: "0 auto",
+            lineHeight: "1.6",
+          }}
+        >
+          Get started with our platform in three simple steps and transform your pharmaceutical supply chain management
+        </Text>
+      </Box>
+
+      <Grid columns="3" gap="6" style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        {steps.map((step, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.2 }}
+            viewport={{ once: false }}
+          >
+            <Card
+              style={{
+                background: "#FFFFFF",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                borderRadius: "24px",
+                overflow: "hidden",
+                height: "100%",
+                border: "1px solid rgba(0,0,0,0.05)",
+                transition: "all 0.3s ease",
+                position: "relative",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-5px)";
+                e.currentTarget.style.boxShadow = "0 8px 30px rgba(0,0,0,0.12)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.1)";
+              }}
+            >
+              <Box
+                style={{
+                  background: step.gradient,
+                  padding: "32px",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
+                <Box
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: "radial-gradient(circle at 70% -10%, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 60%)",
+                  }}
+                />
+                <Flex justify="between" align="center" style={{ marginBottom: "24px" }}>
+                  <Box
+                    style={{
+                      width: "56px",
+                      height: "56px",
+                      borderRadius: "16px",
+                      background: "rgba(255,255,255,0.2)",
+                      backdropFilter: "blur(10px)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "28px",
+                    }}
+                  >
+                    {step.icon}
+                  </Box>
+                  <Text
+                    size="8"
+                    style={{
+                      color: "rgba(255,255,255,0.3)",
+                      fontWeight: "800",
+                      fontSize: "3rem",
+                      lineHeight: "1",
+                    }}
+                  >
+                    {step.number}
+                  </Text>
+                </Flex>
+                <Heading size="5" style={{ color: "#FFFFFF", marginBottom: "12px" }}>
+                  {step.title}
+                </Heading>
+                <Text size="2" style={{ color: "rgba(255,255,255,0.9)", lineHeight: "1.6" }}>
+                  {step.description}
+                </Text>
+              </Box>
+            </Card>
+          </motion.div>
+        ))}
+      </Grid>
+
+      <Box style={{ textAlign: "center", marginTop: "64px" }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+          viewport={{ once: false }}
+        >
+          <Button
+            size="4"
+            onClick={() => navigate("/register")}
+            style={{
+              background: colors.primary.main,
+              color: "#FFFFFF",
+              padding: "0 32px",
+              height: "56px",
+              fontSize: "1.125rem",
+              fontWeight: "600",
+              borderRadius: "12px",
+              border: "none",
+              boxShadow: "0 4px 6px rgba(0, 172, 193, 0.2)",
+              transition: "all 0.3s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.boxShadow = "0 6px 12px rgba(0, 172, 193, 0.3)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 4px 6px rgba(0, 172, 193, 0.2)";
+            }}
+          >
+            Get Started Now
+          </Button>
+        </motion.div>
+      </Box>
+    </Container>
+  </motion.div>
+</Box>
+<Box
+      style={{
         padding: "120px 0",
         background: "#FFFFFF",
         position: "relative",
-        overflow: "hidden"
-      }}>
-        {/* Background Pattern */}
-        <Box style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: "100%",
-          background: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23${colors.primary.main.substring(1)}' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }} />
+        overflow: "hidden",
+      }}
+      ref={ref}
+    >
+      <Container size="4">
+        <Box style={{ textAlign: "center", maxWidth: "800px", margin: "0 auto 80px" }}>
+          <Text
+            size="3"
+            style={{
+              color: colors.primary.main,
+              fontWeight: "500",
+              marginBottom: "16px",
+              textTransform: "uppercase",
+              letterSpacing: "0.1em",
+            }}
+          >
+            Success Stories
+          </Text>
+          <Heading
+            size="8"
+            style={{
+              color: colors.text.primary,
+              marginBottom: "24px",
+              fontSize: "3rem",
+              lineHeight: "1.2",
+            }}
+          >
+            Trusted by Industry Leaders
+          </Heading>
+          <Text
+            size="4"
+            style={{
+              color: colors.text.secondary,
+              maxWidth: "600px",
+              margin: "0 auto",
+              lineHeight: "1.6",
+            }}
+          >
+            See how DrugLedger is transforming pharmaceutical supply chains and setting new standards in the industry
+          </Text>
+        </Box>
 
-        <Container size="4">
-          <Box style={{ textAlign: "center", maxWidth: "800px", margin: "0 auto 80px" }}>
-            <Text
-              size="3"
-              style={{
-                color: colors.primary.main,
-                fontWeight: "500",
-                marginBottom: "16px",
-                textTransform: "uppercase",
-                letterSpacing: "0.1em",
-              }}
-            >
-              Success Stories
-            </Text>
-            <Heading
-              size="8"
-              style={{
-                color: colors.text.primary,
-                marginBottom: "24px",
-                fontSize: "3rem",
-                lineHeight: "1.2",
-              }}
-            >
-              Trusted by Industry Leaders
-            </Heading>
-            <Text
-              size="4"
-              style={{
-                color: colors.text.secondary,
-                maxWidth: "600px",
-                margin: "0 auto",
-                lineHeight: "1.6",
-              }}
-            >
-              See how DrugLedger is transforming pharmaceutical supply chains and setting new standards in the industry
-            </Text>
-          </Box>
-
-          <Box style={{ 
-            maxWidth: "1200px",
-            margin: "0 auto",
-            position: "relative",
-          }}>
-            <div style={{ width: "100%" }}>
-            <Card style={{ 
-                background: "linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%)",
-                boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
-                borderRadius: "24px",
+        <Box style={{ maxWidth: "1200px", margin: "0 auto", position: "relative" }}>
+          <Card
+            style={{
+              background: "linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%)",
+              boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+              borderRadius: "24px",
               overflow: "hidden",
-                border: "1px solid rgba(0,0,0,0.05)",
-              }}>
-                <Grid columns="2" gap="6">
-                  {/* Left Column - Quote and Author */}
-                  <Box p="6">
-                    <Box style={{ marginBottom: "32px" }}>
-                      {/* Rating Stars */}
-                      <Flex gap="1" style={{ marginBottom: "24px" }}>
-                        {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
-                          <Text key={i} style={{ color: "#FFB800", fontSize: "24px" }}>★</Text>
-                        ))}
-                      </Flex>
-                      
-                      <Text size="6" style={{
-                        color: colors.text.primary,
-                        lineHeight: "1.6",
-                        marginBottom: "32px",
-                        fontStyle: "italic",
-                        position: "relative",
-                      }}>
-                        <Text style={{
-                          fontSize: "64px",
-                          position: "absolute",
-                          top: "-20px",
-                          left: "-8px",
-                          color: `${colors.primary.main}20`,
-                          fontFamily: "serif",
-                        }}>
-                          "
-                        </Text>
-                        {testimonials[currentTestimonial].quote}
-                      </Text>
-                    </Box>
+              border: "1px solid rgba(0,0,0,0.05)",
+            }}
+          >
+            <Grid columns="2" gap="6">
+              <motion.div
+                key={testimonial.author}
+                initial={{ x: -100, opacity: 0 }}
+                animate={inView ? { x: 0, opacity: 1 } : {}}
+                transition={{ duration: 0.8 }}
+              >
+                <Box p="6">
+                  <Flex gap="1" style={{ marginBottom: "24px" }}>
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Text key={i} style={{ color: "#FFB800", fontSize: "24px" }}>★</Text>
+                    ))}
+                  </Flex>
+                  <Text
+                    size="6"
+                    style={{
+                      color: colors.text.primary,
+                      lineHeight: "1.6",
+                      marginBottom: "32px",
+                      fontStyle: "italic",
+                      position: "relative",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: "64px",
+                        position: "absolute",
+                        top: "-20px",
+                        left: "-8px",
+                        color: `${colors.primary.main}20`,
+                        fontFamily: "serif",
+                      }}
+                    >
+                      "
+                    </Text>
+                    {testimonial.quote}
+                  </Text>
 
-                    <Flex align="center" gap="4">
-                  <Box style={{ 
+                  <Flex align="center" gap="4">
+                    <Box
+                      style={{
                         width: "64px",
                         height: "64px",
                         borderRadius: "20px",
                         background: colors.gradient.primary,
                         color: "#FFFFFF",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                         fontSize: "24px",
                         fontWeight: "600",
-                      }}>
-                        {testimonials[currentTestimonial].avatar}
-                  </Box>
-                  <Box>
-                        <Text weight="bold" size="4" style={{ 
-                          color: colors.text.primary,
-                          marginBottom: "4px"
-                        }}>
-                          {testimonials[currentTestimonial].author}
-                        </Text>
-                        <Text size="2" style={{ 
-                          color: colors.text.secondary,
-                          marginBottom: "4px"
-                        }}>
-                          {testimonials[currentTestimonial].role}
-                        </Text>
-                        <Text size="2" style={{ color: colors.primary.main }}>
-                          {testimonials[currentTestimonial].company}
-                        </Text>
-                  </Box>
-                </Flex>
+                      }}
+                    >
+                      {testimonial.avatar}
+                    </Box>
+                    <Box>
+                      <Text weight="bold" size="4" style={{ color: colors.text.primary }}>
+                        {testimonial.author}
+                      </Text>
+                      <Text size="2" style={{ color: colors.text.secondary }}>
+                        {testimonial.role}
+                      </Text>
+                      <Text size="2" style={{ color: colors.primary.main }}>
+                        {testimonial.company}
+                      </Text>
+                    </Box>
+                  </Flex>
 
-                    {/* Key Metrics */}
-                    <Grid columns="3" gap="4" style={{ marginTop: "32px" }}>
-                      {Object.entries(testimonials[currentTestimonial].metrics).map(([key, value], idx) => (
-                        <Box key={idx} style={{
+                  <Grid columns="3" gap="4" style={{ marginTop: "32px" }}>
+                    {Object.entries(testimonial.metrics).map(([key, value], idx) => (
+                      <Box
+                        key={idx}
+                        style={{
                           padding: "16px",
                           background: `${colors.primary.main}08`,
                           borderRadius: "12px",
-                          textAlign: "center"
-                        }}>
-                          <Text size="5" weight="bold" style={{ 
-                            color: colors.primary.main,
-                            marginBottom: "4px"
-                          }}>
-                            {value}
-                </Text>
-                          <Text size="1" style={{ 
-                            color: colors.text.secondary,
-                            textTransform: "capitalize"
-                          }}>
-                            {key}
-                          </Text>
-              </Box>
-                      ))}
-                    </Grid>
-                  </Box>
+                          textAlign: "center",
+                        }}
+                      >
+                        <Text size="5" weight="bold" style={{ color: colors.primary.main }}>
+                          {value}
+                        </Text>
+                        <Text size="1" style={{ color: colors.text.secondary }}>
+                          {key}
+                        </Text>
+                      </Box>
+                    ))}
+                  </Grid>
+                </Box>
+              </motion.div>
 
-                  {/* Right Column - Image */}
-                  <Box style={{
+              <motion.div
+                key={testimonial.avatar + "_image"}
+                initial={{ x: 100, opacity: 0 }}
+                animate={inView ? { x: 0, opacity: 1 } : {}}
+                transition={{ duration: 0.8 }}
+              >
+                <Box
+                  style={{
                     background: `linear-gradient(135deg, ${colors.primary.main}15 0%, ${colors.primary.main}05 100%)`,
                     borderRadius: "24px",
-              overflow: "hidden",
+                    overflow: "hidden",
                     position: "relative",
                     minHeight: "500px",
-                  }}>
-                  <Box style={{ 
+                  }}
+                >
+                  <Box
+                    style={{
                       position: "absolute",
                       top: "50%",
                       left: "50%",
                       transform: "translate(-50%, -50%)",
                       width: "80%",
                       textAlign: "center",
-                    }}>
-                      <Text size="8" style={{ color: colors.primary.main }}>
-                        {testimonials[currentTestimonial].avatar}
-                      </Text>
-                    </Box>
+                    }}
+                  >
+                    <Text size="8" style={{ color: colors.primary.main }}>
+                      {testimonial.avatar}
+                    </Text>
                   </Box>
-                </Grid>
-              </Card>
-            </div>
+                </Box>
+              </motion.div>
+            </Grid>
+          </Card>
 
-            {/* Navigation Controls */}
-            <Flex justify="between" style={{
+          <Flex
+            justify="between"
+            style={{
               position: "absolute",
               top: "50%",
               left: "-80px",
               right: "-80px",
               transform: "translateY(-50%)",
               pointerEvents: "none",
+            }}
+          >
+            <Button onClick={previousTestimonial} style={{
+              width: "56px",
+              height: "56px",
+              borderRadius: "50%",
+              background: "#FFFFFF",
+              border: "none",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#333",
+              pointerEvents: "auto",
+              transition: "transform 0.3s ease",
             }}>
-              <Button
-                onClick={previousTestimonial}
-                style={{
-                  width: "56px",
-                  height: "56px",
-                  borderRadius: "50%",
-                  background: "#FFFFFF",
-                  border: "none",
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                  cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  color: colors.text.primary,
-                  pointerEvents: "auto",
-                  transition: "all 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateX(-5px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateX(0)";
-                }}
-              >
-                <ChevronLeftIcon width={24} height={24} />
-              </Button>
-              <Button
-                onClick={nextTestimonial}
-                style={{
-                  width: "56px",
-                  height: "56px",
-                  borderRadius: "50%",
-                  background: "#FFFFFF",
-                  border: "none",
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: colors.text.primary,
-                  pointerEvents: "auto",
-                  transition: "all 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateX(5px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateX(0)";
-                }}
-              >
-                <ChevronRightIcon width={24} height={24} />
-              </Button>
-            </Flex>
+              <ChevronLeftIcon width={24} height={24} />
+            </Button>
+            <Button onClick={nextTestimonial} style={{
+              width: "56px",
+              height: "56px",
+              borderRadius: "50%",
+              background: "#FFFFFF",
+              border: "none",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#333",
+              pointerEvents: "auto",
+              transition: "transform 0.3s ease",
+            }}>
+              <ChevronRightIcon width={24} height={24} />
+            </Button>
+          </Flex>
 
-            {/* Testimonial Indicators */}
-            <Flex justify="center" gap="3" style={{ marginTop: "48px" }}>
-              {testimonials.map((_, index) => (
-                <Box
-                  key={index}
-                  onClick={() => setCurrentTestimonial(index)}
-                  style={{
-                    width: index === currentTestimonial ? "32px" : "8px",
-                    height: "8px",
-                    borderRadius: "4px",
-                    background: currentTestimonial === index ? colors.primary.main : `${colors.primary.main}40`,
-                    cursor: "pointer",
-                    transition: "all 0.3s ease",
-                  }}
-                />
-              ))}
-            </Flex>
-                  </Box>
-        </Container>
-                  </Box>
+          <Flex justify="center" gap="3" style={{ marginTop: "48px" }}>
+            {testimonials.map((_, index) => (
+              <Box
+                key={index}
+                onClick={() => setCurrentTestimonial(index)}
+                style={{
+                  width: index === currentTestimonial ? "32px" : "8px",
+                  height: "8px",
+                  borderRadius: "4px",
+                  background:
+                    index === currentTestimonial
+                      ? colors.primary.main
+                      : `${colors.primary.main}40`,
+                  cursor: "pointer",
+                  transition: "all 0.3s ease",
+                }}
+              />
+            ))}
+          </Flex>
+        </Box>
+      </Container>
+    </Box>
+  );
+};
 
       {/* Featured Products Section */}
 
       {/* Call to Action Section */}
+      <motion.div
+      ref={rearRef}
+      initial={{ opacity: 0, y: 60 }}
+      animate={controls}
+    >
       <Box style={{ 
         padding: "120px 0",
         background: colors.gradient.primary,
         color: "#FFFFFF",
         position: "relative",
-            overflow: "hidden",
-          }}>
+        overflow: "hidden",
+      }}>
         <Container size="4">
           <Box style={{
-              textAlign: "center",
+            textAlign: "center",
             maxWidth: "600px",
             margin: "0 auto",
           }}>
@@ -1241,7 +1308,7 @@ export default function Home() {
               lineHeight: "1.6",
             }}>
               Join thousands of pharmaceutical companies ensuring safety and compliance with DrugLedger.
-              </Text>
+            </Text>
             <Flex gap="4" justify="center" align="center">
               <Button
                 size="4"
@@ -1268,7 +1335,7 @@ export default function Home() {
                 }}
               >
                 Get Started
-                </Button>
+              </Button>
               <Button
                 size="4"
                 variant="outline"
@@ -1294,14 +1361,14 @@ export default function Home() {
                   e.currentTarget.style.borderColor = "rgba(255,255,255,0.5)";
                 }}
               >
-                  Contact Us
-                </Button>
-              </Flex>
+                Contact Us
+              </Button>
+            </Flex>
           </Box>
         </Container>
-        </Box>
-        
-      {/* Modern Minimal Footer */}
+      </Box>
+
+      {/* Footer */}
       <Box style={{ 
         background: "linear-gradient(to right, #FFFFFF, #F8FAFC)",
         borderTop: "1px solid rgba(0,0,0,0.06)",
@@ -1364,8 +1431,8 @@ export default function Home() {
                 }}
               >
                 Secure pharmaceutical supply chain management powered by blockchain
-                </Text>
-              </Box>
+              </Text>
+            </Box>
 
             {/* Social Links */}
             <Flex 
@@ -1388,8 +1455,8 @@ export default function Home() {
                     height: "40px",
                     borderRadius: "50%",
                     padding: "0",
-                display: "flex",
-                alignItems: "center",
+                    display: "flex",
+                    alignItems: "center",
                     justifyContent: "center",
                     color: colors.text.secondary,
                     background: "rgba(0,0,0,0.03)",
@@ -1412,7 +1479,7 @@ export default function Home() {
                   }}
                 >
                   {social[0]}
-              </Button>
+                </Button>
               ))}
             </Flex>
 
@@ -1492,8 +1559,9 @@ export default function Home() {
               © {new Date().getFullYear()} DrugLedger. All rights reserved.
             </Text>
           </Flex>
-      </Container>
+        </Container>
       </Box>
+    </motion.div>
     </Box>
   );
 }
