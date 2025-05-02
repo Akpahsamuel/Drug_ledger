@@ -291,15 +291,17 @@ export default function Home() {
 
   const testimonial = testimonials[currentTestimonial];
 
-  if (rearInView) {
-    controls.start({
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: "easeOut" },
-    });
-  } else {
-    controls.start({ opacity: 0, y: 60 });
-  }
+  useEffect(() => {
+    if (rearInView) {
+      controls.start({
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.8, ease: "easeOut" },
+      });
+    } else {
+      controls.start({ opacity: 0, y: 60 });
+    }
+  }, [rearInView, controls]);
 
   return (
     <Box style={{ width: "100%", background: colors.background.main }}>
