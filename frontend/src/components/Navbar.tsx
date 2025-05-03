@@ -63,7 +63,7 @@ const Navbar = ({ children }: NavbarProps) => {
         left: 0,
         right: 0,
         zIndex: 1000,
-        background: colors.background.transparent,
+        background: "linear-gradient(135deg, #1856fe 0%, #0a5ca3 100%)",
         backdropFilter: "blur(8px)",
         boxShadow: colors.shadow.navbar,
         borderBottom: "1px solid rgba(0, 0, 0, 0.05)",
@@ -85,7 +85,7 @@ const Navbar = ({ children }: NavbarProps) => {
                 style={{ 
                   fontSize: "1.5rem", 
                   fontWeight: "700",
-                  color: colors.primary.main,
+                  color: 'white',
                   display: "flex",
                   alignItems: "center",
                   gap: "2px",

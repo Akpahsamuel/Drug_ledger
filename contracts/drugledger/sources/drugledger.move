@@ -1,14 +1,12 @@
 module drugledger::drug_ledger {
-   // use sui::object::{Self, UID};
     use sui::event;
     use sui::table::{Self, Table};
     use sui::dynamic_field as df;
     use std::string::{Self, String};
-    //use std::vector;
     use sui::clock::{Self, Clock};
     use sui::vec_map::{Self, VecMap};
-   // use sui::transfer;
-  //  use sui::tx_context::{Self, TxContext};
+   
+
 
     // Error codes
     const ENotIssueOwner: u64 = 3;
